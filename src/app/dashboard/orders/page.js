@@ -40,7 +40,7 @@ export default function OrdersPage() {
         <p style={{ color: 'var(--text-secondary)' }}>Loading your orders...</p>
       ) : orders.length === 0 ? (
         <div style={{ background: 'var(--glass-bg)', padding: '40px', borderRadius: '12px', textAlign: 'center', border: '1px solid var(--glass-border)' }}>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '18px', marginBottom: '20px' }}>You haven't placed any orders yet.</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '18px', marginBottom: '20px' }}>You haven&apos;t placed any orders yet.</p>
           <Link href="/" style={{ background: 'var(--accent-green)', color: '#fff', padding: '12px 24px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>
             Start Shopping
           </Link>

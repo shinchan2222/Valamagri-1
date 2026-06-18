@@ -95,7 +95,7 @@ export default function Login() {
         </form>
 
         <p className={styles.toggleText}>
-          Don't have an account? <Link href="/register">Create an Account</Link>
+          Don&apos;t have an account? <Link href="/register">Create an Account</Link>
         </p>
       </div>
     </div>

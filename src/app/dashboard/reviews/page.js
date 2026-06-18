@@ -47,7 +47,7 @@ export default function ReviewsPage() {
         <section>
           <h2 style={{ color: 'var(--text-primary)', marginBottom: '16px', fontSize: '20px' }}>Your Past Reviews</h2>
           {reviews.length === 0 ? (
-            <p style={{ color: 'var(--text-secondary)' }}>You haven't reviewed any products yet.</p>
+            <p style={{ color: 'var(--text-secondary)' }}>You haven&apos;t reviewed any products yet.</p>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {reviews.map(item => (
@@ -60,7 +60,7 @@ export default function ReviewsPage() {
                     {'★'.repeat(item.rating)}{'☆'.repeat(5 - item.rating)}
                   </div>
                   <p style={{ color: 'var(--text-primary)', margin: 0, fontSize: '14px', lineHeight: '1.5' }}>
-                    "{item.comment}"
+                    &quot;{item.comment}&quot;
                   </p>
                 </div>
               ))}
