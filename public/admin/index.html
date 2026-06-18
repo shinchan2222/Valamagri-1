@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Admin Panel</title>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/font-awesome.min.css">
+	<link rel="stylesheet" href="css/ionicons.min.css">
+	<link rel="stylesheet" href="css/datepicker3.css">
+	<link rel="stylesheet" href="css/all.css">
+	<link rel="stylesheet" href="css/select2.min.css">
+	<link rel="stylesheet" href="css/dataTables.bootstrap.css">
+	<link rel="stylesheet" href="css/jquery.fancybox.css">
+	<link rel="stylesheet" href="css/AdminLTE.min.css">
+	<link rel="stylesheet" href="css/_all-skins.min.css">
+	<link rel="stylesheet" href="css/on-off-switch.css"/>
+	<link rel="stylesheet" href="css/summernote.css">
+	<link rel="stylesheet" href="style.css">
+
+    <!-- Custom CSS for SPA transition -->
+    <style>
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+
+<body class="hold-transition fixed skin-blue sidebar-mini">
+	<div class="wrapper">
+
+		<header class="main-header">
+			<a href="#dashboard" class="logo">
+				<span class="logo-lg">eCommerce PHP</span>
+			</a>
+			<nav class="navbar navbar-static-top">
+				<a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+					<span class="sr-only">Toggle navigation</span>
+				</a>
+				<span style="float:left;line-height:50px;color:#fff;padding-left:15px;font-size:18px;">Admin Panel</span>
+				<div class="navbar-custom-menu">
+					<ul class="nav navbar-nav">
+						<li class="dropdown user user-menu">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+								<img src="img/user.jpg" class="user-image admin-photo" alt="User Image">
+								<span class="hidden-xs admin-name">Admin</span>
+							</a>
+							<ul class="dropdown-menu">
+								<li class="user-footer">
+									<div>
+										<a href="#profile-edit" class="btn btn-default btn-flat">Edit Profile</a>
+									</div>
+									<div>
+										<a href="#" id="logoutBtn" class="btn btn-default btn-flat">Log out</a>
+									</div>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</nav>
+		</header>
+
+  		<aside class="main-sidebar">
+    		<section class="sidebar">
+      			<ul class="sidebar-menu">
+			        <li class="treeview">
+			          <a href="#dashboard" class="nav-link" data-view="dashboard">
+			            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+			          </a>
+			        </li>
+			        <li class="treeview">
+			          <a href="#settings" class="nav-link" data-view="settings">
+			            <i class="fa fa-sliders"></i> <span>Website Settings</span>
+			          </a>
+			        </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-cogs"></i>
+                            <span>Shop Settings</span>
+                            <span class="pull-right-container">
+								<i class="fa fa-angle-left pull-right"></i>
+							</span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="#size" class="nav-link" data-view="size"><i class="fa fa-circle-o"></i> Quantity</a></li>
+                            <li><a href="#color" class="nav-link" data-view="color"><i class="fa fa-circle-o"></i> Color</a></li>
+                            <li><a href="#country" class="nav-link" data-view="country"><i class="fa fa-circle-o"></i> District</a></li>
+                            <li><a href="#shipping-cost" class="nav-link" data-view="shipping-cost"><i class="fa fa-circle-o"></i> Shipping Cost</a></li>
+                            <li><a href="#top-category" class="nav-link" data-view="top-category"><i class="fa fa-circle-o"></i> Top Level Category</a></li>
+                            <li><a href="#mid-category" class="nav-link" data-view="mid-category"><i class="fa fa-circle-o"></i> Mid Level Category</a></li>
+                            <li><a href="#end-category" class="nav-link" data-view="end-category"><i class="fa fa-circle-o"></i> End Level Category</a></li>
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a href="#products" class="nav-link" data-view="products">
+                            <i class="fa fa-shopping-bag"></i> <span>Product Management</span>
+                        </a>
+                    </li>
+                    <li class="treeview">
+                        <a href="#order" class="nav-link" data-view="order">
+                            <i class="fa fa-sticky-note"></i> <span>Order Management</span>
+                        </a>
+                    </li>
+                    <li class="treeview">
+			          <a href="#slider" class="nav-link" data-view="slider">
+			            <i class="fa fa-picture-o"></i> <span>Manage Sliders</span>
+			          </a>
+			        </li>
+			        <li class="treeview">
+			          <a href="#service" class="nav-link" data-view="service">
+			            <i class="fa fa-list-ol"></i> <span>Services</span>
+			          </a>
+			        </li>
+			        <li class="treeview">
+			          <a href="#faq" class="nav-link" data-view="faq">
+			            <i class="fa fa-question-circle"></i> <span>FAQ</span>
+			          </a>
+			        </li>
+					<li class="treeview">
+			          <a href="#customer" class="nav-link" data-view="customer">
+			            <i class="fa fa-user-plus"></i> <span>Registered Customer</span>
+			          </a>
+			        </li>
+			        <li class="treeview">
+			          <a href="#page" class="nav-link" data-view="page">
+			            <i class="fa fa-tasks"></i> <span>Page Settings</span>
+			          </a>
+			        </li>
+			        <li class="treeview">
+			          <a href="#social-media" class="nav-link" data-view="social-media">
+			            <i class="fa fa-globe"></i> <span>Social Media</span>
+			          </a>
+			        </li>
+			        <li class="treeview">
+			          <a href="#subscriber" class="nav-link" data-view="subscriber">
+			            <i class="fa fa-hand-o-right"></i> <span>Subscriber</span>
+			          </a>
+			        </li>
+      			</ul>
+    		</section>
+  		</aside>
+
+  		<div class="content-wrapper" id="app-content">
+            <!-- Dynamic SPA View Content goes here -->
+		</div>
+
+	</div>
+
+	<script src="js/jquery-2.2.4.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/jquery.dataTables.min.js"></script>
+	<script src="js/dataTables.bootstrap.min.js"></script>
+	<script src="js/select2.full.min.js"></script>
+	<script src="js/jquery.inputmask.js"></script>
+	<script src="js/jquery.inputmask.date.extensions.js"></script>
+	<script src="js/jquery.inputmask.extensions.js"></script>
+	<script src="js/moment.min.js"></script>
+	<script src="js/bootstrap-datepicker.js"></script>
+	<script src="js/icheck.min.js"></script>
+	<script src="js/fastclick.js"></script>
+	<script src="js/jquery.sparkline.min.js"></script>
+	<script src="js/jquery.slimscroll.min.js"></script>
+	<script src="js/jquery.fancybox.pack.js"></script>
+	<script src="js/app.min.js"></script>
+	<script src="js/jscolor.js"></script>
+	<script src="js/on-off-switch.js"></script>
+    <script src="js/on-off-switch-onload.js"></script>
+    <script src="js/clipboard.min.js"></script>
+	<script src="js/demo.js"></script>
+	<script src="js/summernote.js"></script>
+
+    <!-- App SPA Logic -->
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+const fs = require('fs'); const file = 'public/admin/app.js'; let content = fs.readFileSync(file, 'utf8'); content = content.replace(/\$\('#example1'\)\.DataTable\(\);/g, \#example1.DataTable({ paging: false });); fs.writeFileSync(file, content);

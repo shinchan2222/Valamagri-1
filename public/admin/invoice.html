@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+      font-size: 14px;
+    }
+    .invoice-container {
+      max-width: 800px;
+      margin: 0 auto;
+      border: 1px solid #ddd;
+      padding: 40px;
+      background: #fff;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 2px solid #333;
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      color: #333;
+      text-transform: uppercase;
+    }
+    .header-details {
+      text-align: right;
+    }
+    .details {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 40px;
+    }
+    .bill-to h3 {
+      margin-top: 0;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    table th {
+      background-color: #f9f9f9;
+      font-weight: bold;
+    }
+    .total-row {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .total-row td {
+      border-top: 2px solid #333;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 12px;
+      color: #777;
+    }
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+      }
+      .invoice-container {
+        border: none;
+        padding: 0;
+      }
+      .no-print {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="no-print" style="margin-bottom: 20px; text-align: right;">
+    <button onclick="window.print()" style="padding: 10px 20px; font-size: 16px; cursor: pointer; background: #3c8dbc; color: white; border: none; border-radius: 3px;">Print Invoice</button>
+  </div>
+  
+  <div class="invoice-container" id="invoice">
+    Loading invoice...
+  </div>
+
+  <script>
+    async function loadInvoice() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('id');
+
+      if (!orderId) {
+        document.getElementById('invoice').innerHTML = '<h2>Error: No order ID provided.</h2>';
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/admin/data?view=order');
+        const { data } = await response.json();
+        
+        const order = data.find(o => o.id == orderId);
+        
+        if (!order) {
+          document.getElementById('invoice').innerHTML = '<h2>Error: Order not found.</h2>';
+          return;
+        }
+
+        let itemsHtml = '';
+        if (order.products && order.products.length > 0) {
+          order.products.forEach(p => {
+            const total = (parseFloat(p.unit_price) * parseInt(p.quantity)).toFixed(2);
+            itemsHtml += `
+              <tr>
+                <td>${p.product_name}</td>
+                <td>Rs. ${p.unit_price}</td>
+                <td>${p.quantity}</td>
+                <td>Rs. ${total}</td>
+              </tr>
+            `;
+          });
+        } else {
+          itemsHtml = '<tr><td colspan="4" style="text-align:center;">No items found.</td></tr>';
+        }
+
+        const address = order.customer_address ? 
+          `${order.customer_address}<br>${order.customer_city}, ${order.customer_state} ${order.customer_zip}` : 
+          'Address not provided';
+
+        const html = `
+          <div class="header">
+            <div>
+              <h1>INVOICE</h1>
+              <p><strong>Order ID:</strong> ${order.payment_id}</p>
+              <p><strong>Date:</strong> ${order.payment_date}</p>
+            </div>
+            <div class="header-details">
+              <h2 style="margin: 0 0 5px 0;">Organic Store</h2>
+              <p style="margin: 0;">123 Farming Avenue<br>Agriculture City, AC 12345</p>
+            </div>
+          </div>
+
+          <div class="details">
+            <div class="bill-to">
+              <h3>Bill To</h3>
+              <p>
+                <strong>${order.customer_name}</strong><br>
+                ${address}<br>
+                Email: ${order.customer_email}<br>
+                Phone: ${order.customer_phone || 'N/A'}
+              </p>
+            </div>
+            <div class="bill-to" style="text-align: right;">
+              <h3>Payment Status</h3>
+              <p>
+                <strong>Method:</strong> ${order.payment_method}<br>
+                <strong>Status:</strong> ${order.payment_status}<br>
+                <strong>Shipping:</strong> ${order.shipping_status}<br>
+                <strong>Transaction ID:</strong> ${order.txnid || 'N/A'}
+              </p>
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Unit Price</th>
+                <th>Quantity</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsHtml}
+              <tr class="total-row">
+                <td colspan="3" style="text-align: right;">Total Paid</td>
+                <td>Rs. ${order.paid_amount}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="footer">
+            <p>Thank you for shopping with us! If you have any questions about this invoice, please contact support.</p>
+          </div>
+        `;
+
+        document.getElementById('invoice').innerHTML = html;
+        
+        setTimeout(() => {
+          window.print();
+        }, 500);
+
+      } catch (err) {
+        console.error('Failed to load invoice:', err);
+        document.getElementById('invoice').innerHTML = '<h2>Error loading invoice data.</h2>';
+      }
+    }
+
+    loadInvoice();
+  </script>
+</body>
+</html>

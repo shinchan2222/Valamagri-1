@@ -1,0 +1,2856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CropPro Admin Control Center</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --font-title: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+
+      --bg-primary: #081214;
+      --bg-secondary: #0d1e21;
+      --bg-tertiary: #132a2e;
+      
+      --accent-green: #24a148;
+      --accent-green-hover: #2ec15d;
+      --accent-gold: #f5a623;
+      --accent-gold-hover: #f7b543;
+      
+      --text-primary: #f8f9fa;
+      --text-secondary: #b0b8c0;
+      --text-muted: #677482;
+      
+      --glass-bg: rgba(13, 30, 33, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.05);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+      --glass-blur: blur(16px);
+
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-title);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    button {
+      cursor: pointer;
+      font-family: inherit;
+      background: none;
+      border: none;
+      outline: none;
+      color: inherit;
+      transition: var(--transition-smooth);
+    }
+
+    input, select, textarea {
+      font-family: inherit;
+      font-size: inherit;
+      outline: none;
+      color: inherit;
+      transition: var(--transition-smooth);
+    }
+
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+    }
+
+    /* Main Admin Layout Grid */
+    .adminLayout {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Sidebar Styling */
+    .adminSidebar {
+      width: 280px;
+      height: 100%;
+      border-right: 1px solid var(--glass-border);
+      display: flex;
+      flex-direction: column;
+      padding: 32px 20px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .sidebarLogo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 36px;
+      color: var(--accent-green);
+    }
+
+    .sidebarLogo h2 {
+      font-size: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    .sidebarMenu {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebarHeader {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 16px 12px 6px 12px;
+      font-weight: 600;
+    }
+
+    .menuItem {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-size: 0.95rem;
+      text-align: left;
+    }
+
+    .menuItem:hover {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-primary);
+    }
+
+    .menuItem.active {
+      background: rgba(36, 161, 72, 0.1);
+      color: #2ec15d;
+      border-left: 3px solid var(--accent-green);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+
+    .menuItem i {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    /* Main Content Styling */
+    .adminMain {
+      flex-grow: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 40px 48px;
+    }
+
+    .mainHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 36px;
+    }
+
+    .mainHeader h1 {
+      font-size: 2.25rem;
+      background: linear-gradient(135deg, var(--text-primary) 30%, var(--text-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .mainHeader p {
+      color: var(--text-secondary);
+    }
+
+    .logoutBtn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 77, 77, 0.05);
+      border: 1px solid rgba(255, 77, 77, 0.15);
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #ff4d4d;
+    }
+
+    .logoutBtn:hover {
+      background: rgba(255, 77, 77, 0.15);
+      border-color: rgba(255, 77, 77, 0.25);
+    }
+
+    /* Panes Content area */
+    .adminPane {
+      display: none;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    .adminPane.active {
+      display: block;
+    }
+
+    /* Table utilities */
+    .tableWrapper {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--glass-border);
+      margin-bottom: 24px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .table th {
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--glass-border);
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--glass-border);
+      vertical-align: middle;
+      font-size: 0.95rem;
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .table tr:hover td {
+      background: rgba(255, 255, 255, 0.015);
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Badges & statuses */
+    .badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .badgeActive { background: rgba(36, 161, 72, 0.1); color: #2ec15d; border: 1px solid rgba(36, 161, 72, 0.2); }
+    .badgePending { background: rgba(245, 166, 35, 0.1); color: var(--accent-gold-hover); border: 1px solid rgba(245, 166, 35, 0.2); }
+    .badgeInactive { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+
+    /* Forms structures */
+    .formCard {
+      padding: 24px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 24px;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .formRow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .inputGroup {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .inputGroup label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .inputGroup input,
+    .inputGroup select,
+    .inputGroup textarea {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+
+    .inputGroup input:focus,
+    .inputGroup select:focus,
+    .inputGroup textarea:focus {
+      border-color: var(--accent-green);
+      box-shadow: 0 0 8px rgba(36, 161, 72, 0.15);
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .paneHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .paneHeader h2 {
+      font-size: 1.5rem;
+    }
+
+    /* Modal dialog overrides */
+    .modalOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 24px;
+    }
+
+    .modalContent {
+      width: 100%;
+      max-width: 700px;
+      border-radius: var(--radius-md);
+      padding: 32px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modalHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 16px;
+    }
+
+    /* Settings section nested layouts */
+    .settingsTabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .settingsTabBtn {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+    }
+
+    .settingsTabBtn.active {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+    }
+
+    /* Toast styling */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--accent-green);
+      color: #fff;
+      padding: 16px 24px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      z-index: 3000;
+      display: none;
+      animation: slideIn 0.3s ease-out forwards;
+      box-shadow: var(--glass-shadow);
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(100px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Stats Grid */
+    .statsGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      margin-bottom: 36px;
+    }
+
+    .statCard {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 24px;
+      border-radius: var(--radius-md);
+    }
+
+    /* Auth panel */
+    .authOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    .authCard {
+      width: 100%;
+      max-width: 400px;
+      padding: 40px;
+      border-radius: var(--radius-md);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toast Message -->
+  <div id="toast" class="toast">Operation completed successfully!</div>
+
+  <!-- Auth Screen -->
+  <div id="authScreen" class="authOverlay">
+    <div class="authCard glass">
+      <div style="color: var(--accent-green); margin-bottom: 16px;">
+        <i data-lucide="lock" style="width: 48px; height: 48px; margin: 0 auto;"></i>
+      </div>
+      <h2>Admin Control</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 24px;">Please log in using your administrator credentials</p>
+      <div id="authError" style="background: rgba(255, 77, 77, 0.1); border: 1px solid rgba(255, 77, 77, 0.2); color: #ff4d4d; padding: 10px; border-radius: 4px; margin-bottom: 20px; text-align: left; display: none;"></div>
+      <form id="authForm" class="form" style="text-align: left;">
+        <div class="inputGroup">
+          <label>Email Address</label>
+          <input type="email" id="authEmail" required>
+        </div>
+        <div class="inputGroup">
+          <label>Password</label>
+          <input type="password" id="authPassword" required>
+        </div>
+        <button type="submit" class="submitBtn" style="width:100%; padding: 12px; margin-top: 10px;">Log In</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main Application Layout -->
+  <div id="adminLayout" class="adminLayout" style="display: none;">
+    
+    <!-- DB Offline Banner -->
+    <div id="dbOfflineBanner" style="
+      display:none; position:fixed; top:0; left:0; right:0; z-index:9999;
+      background:linear-gradient(90deg,#c0392b,#e74c3c);
+      color:#fff; padding:10px 24px; gap:12px; align-items:center;
+      font-size:0.88rem; font-weight:500; box-shadow:0 2px 12px rgba(0,0,0,0.3);">
+      <i data-lucide="database-zap" style="width:18px;height:18px;flex-shrink:0;"></i>
+      <span>⚠️ <strong>Database Offline</strong> — Products and data cannot be loaded.
+        To fix: Start MySQL/XAMPP, or set <code style="background:rgba(255,255,255,0.2);padding:1px 6px;border-radius:4px;">DATABASE_URL</code> in <code style="background:rgba(255,255,255,0.2);padding:1px 6px;border-radius:4px;">.env.local</code> to connect a cloud database.
+      </span>
+    </div>
+
+    <!-- Sidebar Navigation -->
+
+    <aside class="adminSidebar glass">
+      <div class="sidebarLogo">
+        <i data-lucide="leaf" style="width: 24px; height: 24px;"></i>
+        <h2>CropPro Admin</h2>
+      </div>
+
+      <nav class="sidebarMenu">
+        <button class="menuItem active" onclick="switchPane('dashboard', this)">
+          <i data-lucide="layout-dashboard"></i> Dashboard
+        </button>
+        <button class="menuItem" onclick="switchPane('websiteSettings', this)">
+          <i data-lucide="sliders"></i> Website Settings
+        </button>
+
+        <div class="sidebarHeader">Shop Configuration</div>
+        <button class="menuItem" onclick="switchPane('sizes', this)">
+          <i data-lucide="scissors"></i> Sizes
+        </button>
+        <button class="menuItem" onclick="switchPane('colors', this)">
+          <i data-lucide="palette"></i> Colors
+        </button>
+        <button class="menuItem" onclick="switchPane('countries', this)">
+          <i data-lucide="globe-2"></i> Countries
+        </button>
+        <button class="menuItem" onclick="switchPane('shipping', this)">
+          <i data-lucide="truck"></i> Shipping Costs
+        </button>
+        <button class="menuItem" onclick="switchPane('topCats', this)">
+          <i data-lucide="folder-open"></i> Top Categories
+        </button>
+        <button class="menuItem" onclick="switchPane('midCats', this)">
+          <i data-lucide="folder"></i> Mid Categories
+        </button>
+        <button class="menuItem" onclick="switchPane('endCats', this)">
+          <i data-lucide="file-text"></i> End Categories
+        </button>
+
+        <div class="sidebarHeader">Inventory & Orders</div>
+        <button class="menuItem" onclick="switchPane('products', this)">
+          <i data-lucide="shopping-bag"></i> Products
+        </button>
+        <button class="menuItem" onclick="switchPane('orders', this)">
+          <i data-lucide="sticky-note"></i> Orders
+        </button>
+        <button class="menuItem" onclick="switchPane('customers', this)">
+          <i data-lucide="users"></i> Customers
+        </button>
+        <button class="menuItem" onclick="switchPane('customerMessages', this)">
+          <i data-lucide="message-square"></i> Customer Messages
+        </button>
+
+        <div class="sidebarHeader">Promotions & Content</div>
+        <button class="menuItem" onclick="switchPane('sliders', this)">
+          <i data-lucide="images"></i> Sliders
+        </button>
+        <button class="menuItem" onclick="switchPane('services', this)">
+          <i data-lucide="award"></i> Services
+        </button>
+        <button class="menuItem" onclick="switchPane('faqs', this)">
+          <i data-lucide="help-circle"></i> FAQs
+        </button>
+        <button class="menuItem" onclick="switchPane('photoGallery', this)">
+          <i data-lucide="image"></i> Photo Gallery
+        </button>
+        <button class="menuItem" onclick="switchPane('pageSettings', this)">
+          <i data-lucide="layout"></i> Page Settings
+        </button>
+        <button class="menuItem" onclick="switchPane('socials', this)">
+          <i data-lucide="share-2"></i> Social Media
+        </button>
+        <button class="menuItem" onclick="switchPane('subscribers', this)">
+          <i data-lucide="mail"></i> Subscribers
+        </button>
+
+        <div class="sidebarHeader">System & Security</div>
+        <button class="menuItem" onclick="switchPane('languageSettings', this)">
+          <i data-lucide="languages"></i> Language Settings
+        </button>
+        <button class="menuItem" onclick="switchPane('adminProfile', this)">
+          <i data-lucide="user-cog"></i> Admin Profile
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Main Workspace Container -->
+    <main class="adminMain">
+      <header class="mainHeader">
+        <div>
+          <h1 id="paneMainTitle">Dashboard</h1>
+          <p id="paneSubTitle">Overview of metrics and general statistics</p>
+        </div>
+        <button id="logoutBtn" class="logoutBtn">
+          <i data-lucide="log-out" style="width: 16px; height: 16px;"></i> Logout
+        </button>
+      </header>
+
+      <!-- 1. PANE: DASHBOARD -->
+      <div id="paneDashboard" class="adminPane active">
+        <div class="statsGrid">
+          <div class="statCard glass">
+            <div class="statIcon" style="color: var(--accent-green)"><i data-lucide="dollar-sign"></i></div>
+            <div>
+              <div class="statLabel">Total Sales</div>
+              <div id="statSales" class="statVal">$0.00</div>
+            </div>
+          </div>
+          <div class="statCard glass">
+            <div class="statIcon" style="color: var(--accent-gold)"><i data-lucide="landmark"></i></div>
+            <div>
+              <div class="statLabel">Orders</div>
+              <div id="statOrders" class="statVal">0</div>
+            </div>
+          </div>
+          <div class="statCard glass">
+            <div class="statIcon" style="color: #00b4d8"><i data-lucide="users"></i></div>
+            <div>
+              <div class="statLabel">Registered Growers</div>
+              <div id="statCustomers" class="statVal">0</div>
+            </div>
+          </div>
+          <div class="statCard glass">
+            <div class="statIcon" style="color: #b5179e"><i data-lucide="package"></i></div>
+            <div>
+              <div class="statLabel">Products</div>
+              <div id="statProducts" class="statVal">0</div>
+            </div>
+          </div>
+        </div>
+        <div class="glass" style="padding: 40px; border-radius: var(--radius-md); text-align: center; background: rgba(36, 161, 72, 0.03);">
+          <h2>Welcome back to the CropPro Control Center</h2>
+          <p style="color: var(--text-secondary); margin-top: 10px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            Use the sidebar controls to customize the taxonomy categories, inventory items, shipping parameters, order invoices, and structural homepage sliders.
+          </p>
+        </div>
+      </div>
+
+      <!-- 2. PANE: WEBSITE SETTINGS -->
+      <div id="paneWebsiteSettings" class="adminPane">
+        <div class="settingsTabs">
+          <button class="settingsTabBtn active" onclick="switchSubSetting('subSetLogo', this)">Logo</button>
+          <button class="settingsTabBtn" onclick="switchSubSetting('subSetFavicon', this)">Favicon</button>
+          <button class="settingsTabBtn" onclick="switchSubSetting('subSetFooterContact', this)">Footer & Contact</button>
+          <button class="settingsTabBtn" onclick="switchSubSetting('subSetMessageSettings', this)">Message Settings</button>
+          <button class="settingsTabBtn" onclick="switchSubSetting('subSetProducts', this)">Products</button>
+          <button class="settingsTabBtn" onclick="switchSubSetting('subSetHomeSettings', this)">Home Settings</button>
+          <button class="settingsTabBtn" onclick="switchSubSetting('subSetBanners', this)">Banner Settings</button>
+          <button class="settingsTabBtn" onclick="switchSubSetting('subSetPayments', this)">Payment Settings</button>
+          <button class="settingsTabBtn" onclick="switchSubSetting('subSetScripts', this)">Head & Body Scripts</button>
+        </div>
+
+        <div id="subSetLogo" class="subSettingContent glass" style="padding: 24px; border-radius: var(--radius-sm);">
+          <form class="form" onsubmit="saveWebSettings(event)">
+            <div class="inputGroup">
+              <label>Logo Image</label>
+              <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                <img id="preview_logo" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                <input type="text" id="set_logo" name="logo" readonly style="width:180px;">
+                <input type="file" accept="image/*" id="file_logo" style="display:none;" onchange="handleFileSelect(this, 'set_logo', 'preview_logo')">
+                <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_logo').click()"><i data-lucide="upload"></i> Upload</button>
+              </div>
+            </div>
+            <button type="submit" class="submitBtn" style="align-self: flex-end; margin-top: 15px;">Save Logo</button>
+          </form>
+        </div>
+
+        <div id="subSetFavicon" class="subSettingContent glass" style="padding: 24px; border-radius: var(--radius-sm); display:none;">
+          <form class="form" onsubmit="saveWebSettings(event)">
+            <div class="inputGroup">
+              <label>Favicon Image</label>
+              <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                <img id="preview_favicon" src="" style="height:32px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                <input type="text" id="set_favicon" name="favicon" readonly style="width:180px;">
+                <input type="file" accept="image/*" id="file_favicon" style="display:none;" onchange="handleFileSelect(this, 'set_favicon', 'preview_favicon')">
+                <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_favicon').click()"><i data-lucide="upload"></i> Upload</button>
+              </div>
+            </div>
+            <button type="submit" class="submitBtn" style="align-self: flex-end; margin-top: 15px;">Save Favicon</button>
+          </form>
+        </div>
+
+        <div id="subSetFooterContact" class="subSettingContent glass" style="padding: 24px; border-radius: var(--radius-sm); display:none;">
+          <form class="form" onsubmit="saveWebSettings(event)">
+            <div class="inputGroup">
+              <label>Footer Copyright Text</label>
+              <input type="text" id="set_footer_copyright" name="footer_copyright">
+            </div>
+            <div class="inputGroup">
+              <label>Footer About Text</label>
+              <textarea id="set_footer_about" name="footer_about" rows="3"></textarea>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Store Phone</label><input type="text" id="set_contact_phone" name="contact_phone"></div>
+              <div class="inputGroup"><label>Store Fax</label><input type="text" id="set_contact_fax" name="contact_fax"></div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Store Email</label><input type="email" id="set_contact_email" name="contact_email"></div>
+              <div class="inputGroup"><label>Contact Form Receive Email</label><input type="email" id="set_receive_email" name="receive_email"></div>
+            </div>
+            <div class="inputGroup"><label>Store Address</label><textarea id="set_contact_address" name="contact_address" rows="2"></textarea></div>
+            <div class="inputGroup"><label>Store Location Map Google Iframe Source</label><textarea id="set_contact_map_iframe" name="contact_map_iframe" rows="3"></textarea></div>
+            <button type="submit" class="submitBtn" style="align-self: flex-end; margin-top: 15px;">Save Footer & Contact Info</button>
+          </form>
+        </div>
+
+        <div id="subSetMessageSettings" class="subSettingContent glass" style="padding: 24px; border-radius: var(--radius-sm); display:none;">
+          <form class="form" onsubmit="saveWebSettings(event)">
+            <div class="inputGroup"><label>Contact Email Subject Line</label><input type="text" id="set_receive_email_subject" name="receive_email_subject"></div>
+            <div class="inputGroup"><label>Contact Thank-You Message Template</label><textarea id="set_receive_email_thank_you_message" name="receive_email_thank_you_message" rows="3"></textarea></div>
+            <div class="inputGroup"><label>Forget Password Email Template Content</label><textarea id="set_forget_password_message" name="forget_password_message" rows="4"></textarea></div>
+            <button type="submit" class="submitBtn" style="align-self: flex-end; margin-top: 15px;">Save Message Settings</button>
+          </form>
+        </div>
+
+        <div id="subSetProducts" class="subSettingContent glass" style="padding: 24px; border-radius: var(--radius-sm); display:none;">
+          <form class="form" onsubmit="saveWebSettings(event)">
+            <div class="formRowThree">
+              <div class="inputGroup"><label>Featured Products Limit</label><input type="number" id="set_total_featured_product_home" name="total_featured_product_home"></div>
+              <div class="inputGroup"><label>Latest Products Limit</label><input type="number" id="set_total_latest_product_home" name="total_latest_product_home"></div>
+              <div class="inputGroup"><label>Popular Products Limit</label><input type="number" id="set_total_popular_product_home" name="total_popular_product_home"></div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Recent Posts Limit (Footer)</label><input type="number" id="set_total_recent_post_footer" name="total_recent_post_footer"></div>
+              <div class="inputGroup"><label>Popular Posts Limit (Footer)</label><input type="number" id="set_total_popular_post_footer" name="total_popular_post_footer"></div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Recent Posts Limit (Sidebar)</label><input type="number" id="set_total_recent_post_sidebar" name="total_recent_post_sidebar"></div>
+              <div class="inputGroup"><label>Popular Posts Limit (Sidebar)</label><input type="number" id="set_total_popular_post_sidebar" name="total_popular_post_sidebar"></div>
+            </div>
+            <button type="submit" class="submitBtn" style="align-self: flex-end; margin-top: 15px;">Save Products Settings</button>
+          </form>
+        </div>
+
+        <div id="subSetHomeSettings" class="subSettingContent glass" style="padding: 24px; border-radius: var(--radius-sm); display:none;">
+          <form class="form" onsubmit="saveWebSettings(event)">
+            <div style="border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; margin-bottom: 16px;"><h4 style="color:var(--accent-gold);">Section Titles & Headers</h4></div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Featured Products Section Title</label><input type="text" id="set_featured_product_title" name="featured_product_title"></div>
+              <div class="inputGroup"><label>Featured Products Section Subtitle</label><input type="text" id="set_featured_product_subtitle" name="featured_product_subtitle"></div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Latest Products Section Title</label><input type="text" id="set_latest_product_title" name="latest_product_title"></div>
+              <div class="inputGroup"><label>Latest Products Section Subtitle</label><input type="text" id="set_latest_product_subtitle" name="latest_product_subtitle"></div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Popular Products Section Title</label><input type="text" id="set_popular_product_title" name="popular_product_title"></div>
+              <div class="inputGroup"><label>Popular Products Section Subtitle</label><input type="text" id="set_popular_product_subtitle" name="popular_product_subtitle"></div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Testimonials Section Title</label><input type="text" id="set_testimonial_title" name="testimonial_title"></div>
+              <div class="inputGroup"><label>Testimonials Section Subtitle</label><input type="text" id="set_testimonial_subtitle" name="testimonial_subtitle"></div>
+            </div>
+            <div class="inputGroup">
+              <label>Testimonials Background Image</label>
+              <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                <img id="preview_testimonial_photo" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                <input type="text" id="set_testimonial_photo" name="testimonial_photo" readonly style="width:180px;">
+                <input type="file" accept="image/*" id="file_testimonial_photo" style="display:none;" onchange="handleFileSelect(this, 'set_testimonial_photo', 'preview_testimonial_photo')">
+                <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_testimonial_photo').click()"><i data-lucide="upload"></i> Upload</button>
+              </div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Blog Section Title</label><input type="text" id="set_blog_title" name="blog_title"></div>
+              <div class="inputGroup"><label>Blog Section Subtitle</label><input type="text" id="set_blog_subtitle" name="blog_subtitle"></div>
+            </div>
+
+            <div style="border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; margin-top:24px; margin-bottom: 16px;"><h4 style="color:var(--accent-gold);">Call to Action (CTA) & Newsletters</h4></div>
+            <div class="inputGroup"><label>CTA Title</label><input type="text" id="set_cta_title" name="cta_title"></div>
+            <div class="inputGroup"><label>CTA Description</label><textarea id="set_cta_content" name="cta_content" rows="3"></textarea></div>
+            <div class="formRow">
+              <div class="inputGroup"><label>CTA Button Text</label><input type="text" id="set_cta_read_more_text" name="cta_read_more_text"></div>
+              <div class="inputGroup"><label>CTA Button Link</label><input type="text" id="set_cta_read_more_url" name="cta_read_more_url"></div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Newsletter Slogan Text</label><input type="text" id="set_newsletter_text" name="newsletter_text"></div>
+              <div class="inputGroup">
+                <label>CTA Background Image</label>
+                <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                  <img id="preview_cta_photo" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                  <input type="text" id="set_cta_photo" name="cta_photo" readonly style="width:180px;">
+                  <input type="file" accept="image/*" id="file_cta_photo" style="display:none;" onchange="handleFileSelect(this, 'set_cta_photo', 'preview_cta_photo')">
+                  <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_cta_photo').click()"><i data-lucide="upload"></i> Upload</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; margin-top:24px; margin-bottom: 16px;"><h4 style="color:var(--accent-gold);">Layout Visibility & Ad Controls</h4></div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Service Panel</label><select id="set_home_service_on_off" name="home_service_on_off"><option value="1">Show</option><option value="0">Hide</option></select></div>
+              <div class="inputGroup"><label>Welcome block</label><select id="set_home_welcome_on_off" name="home_welcome_on_off"><option value="1">Show</option><option value="0">Hide</option></select></div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Featured Products Grid</label><select id="set_home_featured_product_on_off" name="home_featured_product_on_off"><option value="1">Show</option><option value="0">Hide</option></select></div>
+              <div class="inputGroup"><label>Latest Products Grid</label><select id="set_home_latest_product_on_off" name="home_latest_product_on_off"><option value="1">Show</option><option value="0">Hide</option></select></div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Popular Products Grid</label><select id="set_home_popular_product_on_off" name="home_popular_product_on_off"><option value="1">Show</option><option value="0">Hide</option></select></div>
+              <div class="inputGroup"><label>Newsletter Panel</label><select id="set_newsletter_on_off" name="newsletter_on_off"><option value="1">Show</option><option value="0">Hide</option></select></div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Testimonials Section</label><select id="set_home_testimonial_on_off" name="home_testimonial_on_off"><option value="1">Show</option><option value="0">Hide</option></select></div>
+              <div class="inputGroup"><label>Blog Section</label><select id="set_home_blog_on_off" name="home_blog_on_off"><option value="1">Show</option><option value="0">Hide</option></select></div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Ad Above Welcome</label><select id="set_ads_above_welcome_on_off" name="ads_above_welcome_on_off"><option value="1">On</option><option value="0">Off</option></select></div>
+              <div class="inputGroup"><label>Ad Above Featured Products</label><select id="set_ads_above_featured_product_on_off" name="ads_above_featured_product_on_off"><option value="1">On</option><option value="0">Off</option></select></div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Ad Above Latest Products</label><select id="set_ads_above_latest_product_on_off" name="ads_above_latest_product_on_off"><option value="1">On</option><option value="0">Off</option></select></div>
+              <div class="inputGroup"><label>Ad Above Popular Products</label><select id="set_ads_above_popular_product_on_off" name="ads_above_popular_product_on_off"><option value="1">On</option><option value="0">Off</option></select></div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Ad Above Testimonials</label><select id="set_ads_above_testimonial_on_off" name="ads_above_testimonial_on_off"><option value="1">On</option><option value="0">Off</option></select></div>
+              <div class="inputGroup"><label>Ad Category Sidebar</label><select id="set_ads_category_sidebar_on_off" name="ads_category_sidebar_on_off"><option value="1">On</option><option value="0">Off</option></select></div>
+            </div>
+
+            <div style="border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; margin-top:24px; margin-bottom: 16px;"><h4 style="color:var(--accent-gold);">SEO & Meta Details</h4></div>
+            <div class="inputGroup"><label>Meta Title Home</label><input type="text" id="set_meta_title_home" name="meta_title_home"></div>
+            <div class="inputGroup"><label>Meta Keywords</label><textarea id="set_meta_keyword_home" name="meta_keyword_home" rows="3"></textarea></div>
+            <div class="inputGroup"><label>Meta Description</label><textarea id="set_meta_description_home" name="meta_description_home" rows="3"></textarea></div>
+
+            <button type="submit" class="submitBtn" style="align-self: flex-end; margin-top: 15px;">Save Home Settings</button>
+          </form>
+        </div>
+
+        <div id="subSetBanners" class="subSettingContent glass" style="padding: 24px; border-radius: var(--radius-sm); display:none;">
+          <form class="form" onsubmit="saveWebSettings(event)">
+            <div class="formRow">
+              <div class="inputGroup">
+                <label>Login Page Banner</label>
+                <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                  <img id="preview_banner_login" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                  <input type="text" id="set_banner_login" name="banner_login" readonly style="width:120px;">
+                  <input type="file" accept="image/*" id="file_banner_login" style="display:none;" onchange="handleFileSelect(this, 'set_banner_login', 'preview_banner_login')">
+                  <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_banner_login').click()"><i data-lucide="upload"></i> Upload</button>
+                </div>
+              </div>
+              <div class="inputGroup">
+                <label>Register Page Banner</label>
+                <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                  <img id="preview_banner_registration" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                  <input type="text" id="set_banner_registration" name="banner_registration" readonly style="width:120px;">
+                  <input type="file" accept="image/*" id="file_banner_registration" style="display:none;" onchange="handleFileSelect(this, 'set_banner_registration', 'preview_banner_registration')">
+                  <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_banner_registration').click()"><i data-lucide="upload"></i> Upload</button>
+                </div>
+              </div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup">
+                <label>Forgot Password Banner</label>
+                <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                  <img id="preview_banner_forget_password" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                  <input type="text" id="set_banner_forget_password" name="banner_forget_password" readonly style="width:120px;">
+                  <input type="file" accept="image/*" id="file_banner_forget_password" style="display:none;" onchange="handleFileSelect(this, 'set_banner_forget_password', 'preview_banner_forget_password')">
+                  <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_banner_forget_password').click()"><i data-lucide="upload"></i> Upload</button>
+                </div>
+              </div>
+              <div class="inputGroup">
+                <label>Reset Password Banner</label>
+                <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                  <img id="preview_banner_reset_password" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                  <input type="text" id="set_banner_reset_password" name="banner_reset_password" readonly style="width:120px;">
+                  <input type="file" accept="image/*" id="file_banner_reset_password" style="display:none;" onchange="handleFileSelect(this, 'set_banner_reset_password', 'preview_banner_reset_password')">
+                  <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_banner_reset_password').click()"><i data-lucide="upload"></i> Upload</button>
+                </div>
+              </div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup">
+                <label>Search Page Banner</label>
+                <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                  <img id="preview_banner_search" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                  <input type="text" id="set_banner_search" name="banner_search" readonly style="width:120px;">
+                  <input type="file" accept="image/*" id="file_banner_search" style="display:none;" onchange="handleFileSelect(this, 'set_banner_search', 'preview_banner_search')">
+                  <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_banner_search').click()"><i data-lucide="upload"></i> Upload</button>
+                </div>
+              </div>
+              <div class="inputGroup">
+                <label>Cart Page Banner</label>
+                <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                  <img id="preview_banner_cart" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                  <input type="text" id="set_banner_cart" name="banner_cart" readonly style="width:120px;">
+                  <input type="file" accept="image/*" id="file_banner_cart" style="display:none;" onchange="handleFileSelect(this, 'set_banner_cart', 'preview_banner_cart')">
+                  <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_banner_cart').click()"><i data-lucide="upload"></i> Upload</button>
+                </div>
+              </div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup">
+                <label>Checkout Page Banner</label>
+                <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                  <img id="preview_banner_checkout" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                  <input type="text" id="set_banner_checkout" name="banner_checkout" readonly style="width:120px;">
+                  <input type="file" accept="image/*" id="file_banner_checkout" style="display:none;" onchange="handleFileSelect(this, 'set_banner_checkout', 'preview_banner_checkout')">
+                  <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_banner_checkout').click()"><i data-lucide="upload"></i> Upload</button>
+                </div>
+              </div>
+              <div class="inputGroup">
+                <label>Category Page Banner</label>
+                <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                  <img id="preview_banner_product_category" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                  <input type="text" id="set_banner_product_category" name="banner_product_category" readonly style="width:120px;">
+                  <input type="file" accept="image/*" id="file_banner_product_category" style="display:none;" onchange="handleFileSelect(this, 'set_banner_product_category', 'preview_banner_product_category')">
+                  <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_banner_product_category').click()"><i data-lucide="upload"></i> Upload</button>
+                </div>
+              </div>
+            </div>
+            <div class="inputGroup">
+              <label>Blog Page Banner</label>
+              <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                <img id="preview_banner_blog" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                <input type="text" id="set_banner_blog" name="banner_blog" readonly style="width:120px;">
+                <input type="file" accept="image/*" id="file_banner_blog" style="display:none;" onchange="handleFileSelect(this, 'set_banner_blog', 'preview_banner_blog')">
+                <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_banner_blog').click()"><i data-lucide="upload"></i> Upload</button>
+              </div>
+            </div>
+            <button type="submit" class="submitBtn" style="align-self: flex-end; margin-top: 15px;">Save Banner Settings</button>
+          </form>
+        </div>
+
+        <div id="subSetPayments" class="subSettingContent glass" style="padding: 24px; border-radius: var(--radius-sm); display:none;">
+          <form class="form" onsubmit="saveWebSettings(event)">
+            <div class="inputGroup"><label>PayPal Email</label><input type="email" id="set_paypal_email" name="paypal_email"></div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Stripe Public Key</label><input type="text" id="set_stripe_public_key" name="stripe_public_key"></div>
+              <div class="inputGroup"><label>Stripe Secret Key</label><input type="text" id="set_stripe_secret_key" name="stripe_secret_key"></div>
+            </div>
+            <div class="inputGroup"><label>Bank Deposit Transfer Details</label><textarea id="set_bank_detail" name="bank_detail" rows="4"></textarea></div>
+            <button type="submit" class="submitBtn" style="align-self: flex-end; margin-top: 15px;">Save Payment Details</button>
+          </form>
+        </div>
+
+        <div id="subSetScripts" class="subSettingContent glass" style="padding: 24px; border-radius: var(--radius-sm); display:none;">
+          <form class="form" onsubmit="saveWebSettings(event)">
+            <div class="inputGroup"><label>Before &lt;/head&gt;</label><textarea id="set_before_head" name="before_head" rows="3"></textarea></div>
+            <div class="inputGroup"><label>After &lt;body&gt;</label><textarea id="set_after_body" name="after_body" rows="3"></textarea></div>
+            <div class="inputGroup"><label>Before &lt;/body&gt;</label><textarea id="set_before_body" name="before_body" rows="3"></textarea></div>
+            <button type="submit" class="submitBtn" style="align-self: flex-end; margin-top: 15px;">Save Head & Body Scripts</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 3. PANE: SIZES -->
+      <div id="paneSizes" class="adminPane">
+        <div class="paneHeader">
+          <h2>Garment Sizes</h2>
+          <button class="addBtn" onclick="openCrudModal('tbl_size')"><i data-lucide="plus"></i> Add Size</button>
+        </div>
+        <div class="tableWrapper glass">
+          <table class="table">
+            <thead><tr><th>#</th><th>Size Name</th><th style="text-align: center;">Action</th></tr></thead>
+            <tbody id="tbl_size_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 4. PANE: COLORS -->
+      <div id="paneColors" class="adminPane">
+        <div class="paneHeader">
+          <h2>Product Colors</h2>
+          <button class="addBtn" onclick="openCrudModal('tbl_color')"><i data-lucide="plus"></i> Add Color</button>
+        </div>
+        <div class="tableWrapper glass">
+          <table class="table">
+            <thead><tr><th>#</th><th>Color Name</th><th style="text-align: center;">Action</th></tr></thead>
+            <tbody id="tbl_color_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 5. PANE: COUNTRIES -->
+      <div id="paneCountries" class="adminPane">
+        <div class="paneHeader">
+          <h2>Supported Delivery Countries</h2>
+          <button class="addBtn" onclick="openCrudModal('tbl_country')"><i data-lucide="plus"></i> Add Country</button>
+        </div>
+        <div class="tableWrapper glass">
+          <table class="table">
+            <thead><tr><th>#</th><th>Country Name</th><th style="text-align: center;">Action</th></tr></thead>
+            <tbody id="tbl_country_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 6. PANE: SHIPPING COSTS -->
+      <div id="paneShipping" class="adminPane">
+        <div class="paneHeader">
+          <h2>Shipping Costs</h2>
+          <button class="addBtn" onclick="openCrudModal('tbl_shipping_cost')"><i data-lucide="plus"></i> Add Cost</button>
+        </div>
+        <div class="tableWrapper glass">
+          <table class="table">
+            <thead><tr><th>#</th><th>Country</th><th>Cost Amount</th><th style="text-align: center;">Action</th></tr></thead>
+            <tbody id="tbl_shipping_cost_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 7. PANE: TOP CATEGORIES -->
+      <div id="paneTopCats" class="adminPane">
+        <div class="paneHeader">
+          <h2>Top Level Categories</h2>
+          <button class="addBtn" onclick="openCrudModal('tbl_top_category')"><i data-lucide="plus"></i> Add Top Cat</button>
+        </div>
+        <div class="tableWrapper glass">
+          <table class="table">
+            <thead><tr><th>#</th><th>Category Name</th><th>Show on Menu?</th><th style="text-align: center;">Action</th></tr></thead>
+            <tbody id="tbl_top_category_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 8. PANE: MID CATEGORIES -->
+      <div id="paneMidCats" class="adminPane">
+        <div class="paneHeader">
+          <h2>Mid Level Categories</h2>
+          <button class="addBtn" onclick="openCrudModal('tbl_mid_category')"><i data-lucide="plus"></i> Add Mid Cat</button>
+        </div>
+        <div class="tableWrapper glass">
+          <table class="table">
+            <thead><tr><th>#</th><th>Mid Category Name</th><th>Top Category Name</th><th style="text-align: center;">Action</th></tr></thead>
+            <tbody id="tbl_mid_category_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 9. PANE: END CATEGORIES -->
+      <div id="paneEndCats" class="adminPane">
+        <div class="paneHeader">
+          <h2>End Level Categories</h2>
+          <button class="addBtn" onclick="openCrudModal('tbl_end_category')"><i data-lucide="plus"></i> Add End Cat</button>
+        </div>
+        <div class="tableWrapper glass">
+          <table class="table">
+            <thead><tr><th>#</th><th>End Category Name</th><th>Mid Category</th><th>Top Category</th><th style="text-align: center;">Action</th></tr></thead>
+            <tbody id="tbl_end_category_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 10. PANE: PRODUCTS -->
+      <div id="paneProducts" class="adminPane">
+        <div class="paneHeader">
+          <h2>Store Inventory</h2>
+          <button class="addBtn" onclick="openAddProductForm()"><i data-lucide="plus"></i> Add Product</button>
+        </div>
+        <div class="tableWrapper glass">
+          <table class="table">
+            <thead><tr><th>Product</th><th>Price</th><th>Stock</th><th>Category</th><th style="text-align: center;">Action</th></tr></thead>
+            <tbody id="tbl_product_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 11. PANE: ORDERS -->
+      <div id="paneOrders" class="adminPane">
+        <div class="tableWrapper glass">
+          <table class="table">
+            <thead><tr><th>#</th><th>Customer</th><th>Product Details</th><th>Payment Information</th><th>Paid Amount</th><th>Status</th><th>Shipping</th><th style="text-align: center;">Action</th></tr></thead>
+            <tbody id="tbl_orders_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 12. PANE: CUSTOMERS -->
+      <div id="paneCustomers" class="adminPane">
+        <div class="tableWrapper glass">
+          <table class="table">
+            <thead><tr><th>#</th><th>Grower Name</th><th>Email</th><th>Phone</th><th>State / Zip</th><th>Status</th><th style="text-align: center;">Action</th></tr></thead>
+            <tbody id="tbl_customer_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 13. PANE: SLIDERS -->
+      <div id="paneSliders" class="adminPane">
+        <div class="paneHeader">
+          <h2>Homepage Sliders</h2>
+          <button class="addBtn" onclick="openCrudModal('tbl_slider')"><i data-lucide="plus"></i> Add Slide</button>
+        </div>
+        <div class="tableWrapper glass">
+          <table class="table">
+            <thead><tr><th>Photo</th><th>Heading</th><th>Subheading</th><th>Button URL</th><th style="text-align: center;">Action</th></tr></thead>
+            <tbody id="tbl_slider_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 14. PANE: SERVICES -->
+      <div id="paneServices" class="adminPane">
+        <div class="paneHeader">
+          <h2>Trust Badges / Services</h2>
+          <button class="addBtn" onclick="openCrudModal('tbl_service')"><i data-lucide="plus"></i> Add Service</button>
+        </div>
+        <div class="tableWrapper glass">
+          <table class="table">
+            <thead><tr><th>Icon</th><th>Service Title</th><th>Description Slogan</th><th style="text-align: center;">Action</th></tr></thead>
+            <tbody id="tbl_service_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 15. PANE: FAQS -->
+      <div id="paneFaqs" class="adminPane">
+        <div class="paneHeader">
+          <h2>Frequently Asked Questions</h2>
+          <button class="addBtn" onclick="openCrudModal('tbl_faq')"><i data-lucide="plus"></i> Add FAQ</button>
+        </div>
+        <div class="tableWrapper glass">
+          <table class="table">
+            <thead><tr><th>#</th><th>Question Heading</th><th>Detailed Answer</th><th style="text-align: center;">Action</th></tr></thead>
+            <tbody id="tbl_faq_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 16. PANE: SOCIAL MEDIA -->
+      <div id="paneSocials" class="adminPane">
+        <div class="glass" style="padding: 32px; border-radius: var(--radius-md);">
+          <form id="socialsForm" class="form" onsubmit="saveSocials(event)">
+            <!-- Dynamic inputs built here -->
+            <div id="socialsContainer" class="formRow"></div>
+            <button type="submit" class="submitBtn" style="align-self: flex-end; margin-top: 20px;">Save Channels</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 17. PANE: SUBSCRIBERS -->
+      <div id="paneSubscribers" class="adminPane">
+        <div class="paneHeader">
+          <h2>Newsletter Subscribers</h2>
+          <button class="addBtn" onclick="exportSubscribers()" style="background: var(--accent-gold);"><i data-lucide="download"></i> Export CSV</button>
+        </div>
+        <div class="tableWrapper glass">
+          <table class="table">
+            <thead><tr><th>#</th><th>Subscriber Email</th><th style="text-align: center;">Action</th></tr></thead>
+            <tbody id="tbl_subscriber_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 18. PANE: CUSTOMER MESSAGES -->
+      <div id="paneCustomerMessages" class="adminPane">
+        <div class="tableWrapper glass">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Grower Name</th>
+                <th>Grower Email</th>
+                <th>Subject</th>
+                <th>Message Content</th>
+                <th>Order Details</th>
+                <th style="text-align: center;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="tbl_customer_message_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 19. PANE: PHOTO GALLERY -->
+      <div id="panePhotoGallery" class="adminPane">
+        <div class="paneHeader">
+          <h2>Photo Gallery</h2>
+          <button class="addBtn" onclick="openCrudModal('tbl_photo')"><i data-lucide="plus"></i> Add Photo</button>
+        </div>
+        <div class="tableWrapper glass">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Thumbnail</th>
+                <th>Caption</th>
+                <th style="text-align: center;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="tbl_photo_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 20. PANE: PAGE SETTINGS -->
+      <div id="panePageSettings" class="adminPane">
+        <div class="settingsTabs" style="margin-bottom:20px;">
+          <button class="settingsTabBtn active" onclick="switchPageSettingTab('pageAboutUs', this)">About Us Page</button>
+          <button class="settingsTabBtn" onclick="switchPageSettingTab('pageFaqUs', this)">FAQ Page</button>
+          <button class="settingsTabBtn" onclick="switchPageSettingTab('pageContactUs', this)">Contact Page</button>
+        </div>
+
+        <div id="pageAboutUs" class="pageSettingContent glass" style="padding: 24px; border-radius: var(--radius-sm);">
+          <form class="form" onsubmit="savePageSettings(event, 'about')">
+            <div class="inputGroup"><label>Page Title</label><input type="text" id="page_about_title" required></div>
+            <div class="inputGroup"><label>Page Content</label><textarea id="page_about_content" rows="6" required></textarea></div>
+            <div class="inputGroup">
+              <label>Banner Photo</label>
+              <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                <img id="preview_page_about_banner" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                <input type="text" id="page_about_banner" readonly style="width:180px;">
+                <input type="file" accept="image/*" id="file_page_about_banner" style="display:none;" onchange="handleFileSelect(this, 'page_about_banner', 'preview_page_about_banner')">
+                <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_page_about_banner').click()"><i data-lucide="upload"></i> Upload</button>
+              </div>
+            </div>
+            <div class="inputGroup"><label>Meta Title</label><input type="text" id="page_about_meta_title"></div>
+            <div class="inputGroup"><label>Meta Keywords</label><textarea id="page_about_meta_keyword" rows="2"></textarea></div>
+            <div class="inputGroup"><label>Meta Description</label><textarea id="page_about_meta_description" rows="2"></textarea></div>
+            <button type="submit" class="submitBtn" style="align-self: flex-end; margin-top:10px;">Save About Page</button>
+          </form>
+        </div>
+
+        <div id="pageFaqUs" class="pageSettingContent glass" style="padding: 24px; border-radius: var(--radius-sm); display:none;">
+          <form class="form" onsubmit="savePageSettings(event, 'faq')">
+            <div class="inputGroup"><label>Page Title</label><input type="text" id="page_faq_title" required></div>
+            <div class="inputGroup">
+              <label>Banner Photo</label>
+              <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                <img id="preview_page_faq_banner" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                <input type="text" id="page_faq_banner" readonly style="width:180px;">
+                <input type="file" accept="image/*" id="file_page_faq_banner" style="display:none;" onchange="handleFileSelect(this, 'page_faq_banner', 'preview_page_faq_banner')">
+                <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_page_faq_banner').click()"><i data-lucide="upload"></i> Upload</button>
+              </div>
+            </div>
+            <div class="inputGroup"><label>Meta Title</label><input type="text" id="page_faq_meta_title"></div>
+            <div class="inputGroup"><label>Meta Keywords</label><textarea id="page_faq_meta_keyword" rows="2"></textarea></div>
+            <div class="inputGroup"><label>Meta Description</label><textarea id="page_faq_meta_description" rows="2"></textarea></div>
+            <button type="submit" class="submitBtn" style="align-self: flex-end; margin-top:10px;">Save FAQ Page</button>
+          </form>
+        </div>
+
+        <div id="pageContactUs" class="pageSettingContent glass" style="padding: 24px; border-radius: var(--radius-sm); display:none;">
+          <form class="form" onsubmit="savePageSettings(event, 'contact')">
+            <div class="inputGroup"><label>Page Title</label><input type="text" id="page_contact_title" required></div>
+            <div class="inputGroup">
+              <label>Banner Photo</label>
+              <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                <img id="preview_page_contact_banner" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                <input type="text" id="page_contact_banner" readonly style="width:180px;">
+                <input type="file" accept="image/*" id="file_page_contact_banner" style="display:none;" onchange="handleFileSelect(this, 'page_contact_banner', 'preview_page_contact_banner')">
+                <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_page_contact_banner').click()"><i data-lucide="upload"></i> Upload</button>
+              </div>
+            </div>
+            <div class="inputGroup"><label>Meta Title</label><input type="text" id="page_contact_meta_title"></div>
+            <div class="inputGroup"><label>Meta Keywords</label><textarea id="page_contact_meta_keyword" rows="2"></textarea></div>
+            <div class="inputGroup"><label>Meta Description</label><textarea id="page_contact_meta_description" rows="2"></textarea></div>
+            <button type="submit" class="submitBtn" style="align-self: flex-end; margin-top:10px;">Save Contact Page</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 21. PANE: LANGUAGE SETTINGS -->
+      <div id="paneLanguageSettings" class="adminPane">
+        <div class="paneHeader" style="margin-bottom:16px;">
+          <h2>Language Localization</h2>
+          <div style="position:relative; width:300px;">
+            <input type="text" id="langSearchInput" placeholder="Search translation keys..." oninput="filterLanguageTable()" style="width:100%; padding:10px 16px; border-radius:20px; background:var(--bg-secondary); border:1px solid var(--glass-border); color:var(--text-primary);">
+          </div>
+        </div>
+        <div class="tableWrapper glass">
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">ID</th>
+                <th>Translation Key</th>
+                <th>Display Value</th>
+                <th style="text-align: center; width: 120px;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="tbl_language_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 22. PANE: ADMIN PROFILE -->
+      <div id="paneAdminProfile" class="adminPane">
+        <div class="glass" style="padding: 32px; border-radius: var(--radius-md); max-width: 600px; margin: 0 auto;">
+          <form id="profileForm" class="form" onsubmit="saveAdminProfile(event)">
+            <div class="formRow">
+              <div class="inputGroup"><label>Full Name</label><input type="text" id="profile_name" required></div>
+              <div class="inputGroup"><label>Email Address</label><input type="email" id="profile_email" required></div>
+            </div>
+            <div class="formRow">
+              <div class="inputGroup"><label>Phone Number</label><input type="text" id="profile_phone"></div>
+              <div class="inputGroup">
+                <label>Profile Picture</label>
+                <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                  <img id="preview_profile_photo" src="" style="height:40px; width:40px; border-radius:50%; object-fit:cover; border:1px solid var(--glass-border); display:none;">
+                  <input type="text" id="profile_photo" readonly style="width:120px;">
+                  <input type="file" accept="image/*" id="file_profile_photo" style="display:none;" onchange="handleFileSelect(this, 'profile_photo', 'preview_profile_photo')">
+                  <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_profile_photo').click()"><i data-lucide="upload"></i> Upload</button>
+                </div>
+              </div>
+            </div>
+            <div class="inputGroup">
+              <label>New Password (leave blank to keep current)</label>
+              <input type="password" id="profile_password" placeholder="••••••••">
+            </div>
+            <button type="submit" class="submitBtn" style="width:100%; margin-top:20px; padding:12px;">Update Admin Profile</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    </main>
+  </div>
+
+  <!-- Dynamic Generic Modal overlay -->
+  <div id="crudModal" class="modalOverlay">
+    <div class="modalContent glass">
+      <div class="modalHeader">
+        <h3 id="crudModalTitle">Add Record</h3>
+        <button class="modalClose" onclick="closeCrudModal()"><i data-lucide="x"></i></button>
+      </div>
+      <form id="crudForm" class="form" onsubmit="submitCrudForm(event)">
+        <!-- Dynamic fields go here -->
+        <div id="crudFieldsContainer" class="form"></div>
+        <div class="formButtons">
+          <button type="button" class="cancelBtn" onclick="closeCrudModal()">Cancel</button>
+          <button type="submit" class="submitBtn">Save Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Product Modal override (specifically detailed) -->
+  <div id="productModal" class="modalOverlay">
+    <div class="modalContent glass" style="max-width:860px; max-height:92vh; overflow-y:auto;">
+      <div class="modalHeader">
+        <h3 id="productModalTitle">Add Product</h3>
+        <button class="modalClose" onclick="document.getElementById('productModal').style.display='none'"><i data-lucide="x"></i></button>
+      </div>
+      <form id="productForm" class="form" onsubmit="submitProductForm(event)">
+        <input type="hidden" id="p_id">
+        <!-- Category Cascade Row -->
+        <div class="formRowThree">
+          <div class="inputGroup">
+            <label>Top Category <span style="color:red">*</span></label>
+            <select id="p_top_cat" onchange="loadMidCats(this.value)" required>
+              <option value="">Select Top Category</option>
+            </select>
+          </div>
+          <div class="inputGroup">
+            <label>Mid Category <span style="color:red">*</span></label>
+            <select id="p_mid_cat" onchange="loadEndCats(this.value)" required>
+              <option value="">Select Mid Category</option>
+            </select>
+          </div>
+          <div class="inputGroup">
+            <label>End Category <span style="color:red">*</span></label>
+            <select id="p_category" required>
+              <option value="">Select End Category</option>
+            </select>
+          </div>
+        </div>
+        <!-- Name & Prices -->
+        <div class="inputGroup"><label>Product Name <span style="color:red">*</span></label><input type="text" id="p_name" required></div>
+        <div class="formRowThree">
+          <div class="inputGroup"><label>Current Price ($) <span style="color:red">*</span></label><input type="number" step="0.01" id="p_price" required></div>
+          <div class="inputGroup"><label>Old Price ($)</label><input type="number" step="0.01" id="p_old_price"></div>
+          <div class="inputGroup"><label>Stock Qty <span style="color:red">*</span></label><input type="number" id="p_qty" required></div>
+        </div>
+        <!-- Status -->
+        <div class="formRow">
+          <div class="inputGroup">
+            <label>Is Featured?</label>
+            <select id="p_is_featured">
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+          <div class="inputGroup">
+            <label>Is Active?</label>
+            <select id="p_is_active">
+              <option value="1">Yes</option>
+              <option value="0">No</option>
+            </select>
+          </div>
+        </div>
+        <!-- Sizes & Colors -->
+        <div class="formRow">
+          <div class="inputGroup">
+            <label>Sizes <small style="opacity:0.6">(Ctrl/Cmd to multi-select)</small></label>
+            <select id="p_sizes" multiple style="min-height:90px;"></select>
+          </div>
+          <div class="inputGroup">
+            <label>Colors <small style="opacity:0.6">(Ctrl/Cmd to multi-select)</small></label>
+            <select id="p_colors" multiple style="min-height:90px;"></select>
+          </div>
+        </div>
+        <!-- Text fields -->
+        <div class="inputGroup">
+          <label>Short Description / Slogan</label>
+          <input type="text" id="p_slogan">
+        </div>
+        <div class="inputGroup"><label>Description</label><textarea id="p_desc" rows="4"></textarea></div>
+        <div class="inputGroup"><label>Features</label><textarea id="p_features" rows="3"></textarea></div>
+        <div class="inputGroup"><label>Conditions</label><textarea id="p_condition" rows="3"></textarea></div>
+        <div class="inputGroup"><label>Return Policy</label><textarea id="p_return_policy" rows="3"></textarea></div>
+        <!-- Featured Photo -->
+        <div class="inputGroup">
+          <label>Featured Photo <span style="color:red">*</span></label>
+          <div style="display:flex; align-items:center; gap:12px; margin-top:6px; flex-wrap:wrap;">
+            <img id="preview_product_photo" src="" style="height:60px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none; object-fit:cover;">
+            <input type="text" id="p_photo" readonly style="width:180px;">
+            <input type="file" accept="image/*" id="file_product_photo" style="display:none;" onchange="handleFileSelect(this, 'p_photo', 'preview_product_photo')">
+            <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_product_photo').click()"><i data-lucide="upload"></i> Upload</button>
+          </div>
+        </div>
+        <!-- Other Photos -->
+        <div class="inputGroup">
+          <label>Other Photos (gallery)</label>
+          <div id="otherPhotosList" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px;"></div>
+          <input type="file" accept="image/*" id="file_other_photo" style="display:none;" multiple onchange="handleOtherPhotosSelect(this)">
+          <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_other_photo').click()"><i data-lucide="plus"></i> Add More Photos</button>
+        </div>
+        <div class="formButtons">
+          <button type="button" class="cancelBtn" onclick="document.getElementById('productModal').style.display='none'">Cancel</button>
+          <button type="submit" class="submitBtn">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // System variables
+    let currentTable = '';
+    let currentId = null;
+    let categoryData = [];
+
+    // Session Verification
+    document.addEventListener('DOMContentLoaded', () => {
+      checkSession();
+      lucide.createIcons();
+    });
+
+    function checkSession() {
+      const user = localStorage.getItem('croppro_user');
+      if (user) {
+        const parsed = JSON.parse(user);
+        if (parsed.cust_email === 'admin@mail.com' || parsed.role === 'Admin' || parsed.role === 'Super Admin') {
+          document.getElementById('authScreen').style.display = 'none';
+          document.getElementById('adminLayout').style.display = 'flex';
+          loadDashboardStats();
+          return;
+        }
+      }
+      document.getElementById('authScreen').style.display = 'flex';
+      document.getElementById('adminLayout').style.display = 'none';
+    }
+
+    // Login logic
+    document.getElementById('authForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errDiv = document.getElementById('authError');
+      errDiv.style.display = 'none';
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value;
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          if (data.cust_email === 'admin@mail.com' || data.role === 'Admin' || data.role === 'Super Admin') {
+            localStorage.setItem('croppro_user', JSON.stringify(data));
+            checkSession();
+          } else {
+            errDiv.innerText = 'Access Denied: Admin account required.';
+            errDiv.style.display = 'block';
+          }
+        } else {
+          errDiv.innerText = data.error || 'Invalid email or password.';
+          errDiv.style.display = 'block';
+        }
+      } catch (err) {
+        console.error(err);
+        errDiv.innerText = 'Network error. Please try again.';
+        errDiv.style.display = 'block';
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('croppro_user');
+      checkSession();
+    });
+
+    // Panel Switching Navigation
+    function switchPane(paneName, menuItem) {
+      document.querySelectorAll('.menuItem').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.adminPane').forEach(el => el.classList.remove('active'));
+      
+      menuItem.classList.add('active');
+      const targetPane = document.getElementById(`pane${paneName.charAt(0).toUpperCase() + paneName.slice(1)}`);
+      targetPane.classList.add('active');
+
+      const titleMap = {
+        dashboard: ['Dashboard', 'Overview of metrics and general statistics'],
+        websiteSettings: ['Website Settings', 'Configure headers, footers, payments, and script tags'],
+        sizes: ['Garment Sizes', 'Configure sizing variables'],
+        colors: ['Product Colors', 'Configure color taxonomy arrays'],
+        countries: ['Delivery Countries', 'Countries allowed during checkout billing/shipping'],
+        shipping: ['Shipping Costs', 'Set delivery costs for supported countries'],
+        topCats: ['Top Level Categories', 'Configure primary catalog hierarchies'],
+        midCats: ['Mid Level Categories', 'Configure secondary catalog subgroups'],
+        endCats: ['End Level Categories', 'Configure tertiary subcategory endpoints'],
+        products: ['Store Inventory', 'Add and edit products listed on the storefront'],
+        orders: ['Order Management', 'Track sales invoices, payment details, and dispatch status'],
+        customers: ['Registered Customers', 'Manage grower profiles and toggles'],
+        customerMessages: ['Customer Messages', 'View questions and inquiries submitted by growers'],
+        sliders: ['Homepage Sliders', 'Customize rotating welcome banners'],
+        services: ['Trust Badges & Services', 'Manage services row icons and subtitles'],
+        faqs: ['Frequently Asked Questions', 'Answer common grower/shipping queries'],
+        photoGallery: ['Photo Gallery', 'Manage slide background or informational banner photographs'],
+        pageSettings: ['Page Settings', 'Configure page titles, content, and metadata SEO configurations'],
+        socials: ['Social Media Channels', 'Manage social link URLs displayed in the footer'],
+        subscribers: ['Newsletter Subscribers', 'Subscribed email newsletters list'],
+        languageSettings: ['Language Localization', 'Manage front-end UI labels and word translations'],
+        adminProfile: ['Admin Profile', 'Modify name, email, contact telephone, and security passwords']
+      };
+
+      document.getElementById('paneMainTitle').innerText = titleMap[paneName][0];
+      document.getElementById('paneSubTitle').innerText = titleMap[paneName][1];
+
+      // Route data fetches
+      if (paneName === 'dashboard') loadDashboardStats();
+      else if (paneName === 'websiteSettings') loadWebsiteSettings();
+      else if (paneName === 'socials') loadSocials();
+      else if (paneName === 'customerMessages') loadCustomerMessages();
+      else if (paneName === 'pageSettings') loadPageSettings();
+      else if (paneName === 'languageSettings') loadLanguageSettings();
+      else if (paneName === 'adminProfile') loadAdminProfile();
+      else if (['sizes', 'colors', 'countries', 'shipping', 'topCats', 'midCats', 'endCats', 'sliders', 'services', 'faqs', 'customers', 'subscribers', 'products', 'orders', 'photoGallery'].includes(paneName)) {
+        const tableMap = {
+          sizes: 'tbl_size',
+          colors: 'tbl_color',
+          countries: 'tbl_country',
+          shipping: 'tbl_shipping_cost',
+          topCats: 'tbl_top_category',
+          midCats: 'tbl_mid_category',
+          endCats: 'tbl_end_category',
+          sliders: 'tbl_slider',
+          services: 'tbl_service',
+          faqs: 'tbl_faq',
+          customers: 'tbl_customer',
+          subscribers: 'tbl_subscriber',
+          products: 'tbl_product',
+          orders: 'tbl_payment',
+          photoGallery: 'tbl_photo'
+        };
+        loadCrudTable(tableMap[paneName]);
+      }
+    }
+
+    // Dashboard Statistics Fetch
+    async function loadDashboardStats() {
+      try {
+        const res = await fetch('/api/admin/stats');
+        const data = await res.json();
+        const banner = document.getElementById('dbOfflineBanner');
+        if (res.ok && !data.error) {
+          document.getElementById('statSales').innerText = `$${parseFloat(data.sales || 0).toFixed(2)}`;
+          document.getElementById('statOrders').innerText = data.orders || 0;
+          document.getElementById('statCustomers').innerText = data.customers || 0;
+          document.getElementById('statProducts').innerText = data.products || 0;
+          if (banner) banner.style.display = data.offline ? 'flex' : 'none';
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Website settings tab contents toggler
+    function switchSubSetting(subId, btn) {
+      document.querySelectorAll('.settingsTabBtn').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.subSettingContent').forEach(el => el.style.display = 'none');
+      btn.classList.add('active');
+      document.getElementById(subId).style.display = 'block';
+    }
+
+    // Website settings GET/PUT
+    async function loadWebsiteSettings() {
+      try {
+        const res = await fetch('/api/admin/settings');
+        const data = await res.json();
+        if (res.ok) {
+          Object.keys(data).forEach(key => {
+            const el = document.getElementById(`set_${key}`);
+            if (el) el.value = data[key] !== null ? data[key] : '';
+
+            // Set previews if preview image element exists
+            const previewEl = document.getElementById(`preview_${key}`);
+            if (previewEl && data[key]) {
+              previewEl.src = `/assets/uploads/${data[key]}`;
+              previewEl.style.display = 'block';
+            } else if (previewEl) {
+              previewEl.style.display = 'none';
+            }
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function saveWebSettings(e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const payload = {};
+      formData.forEach((value, key) => {
+        if ([
+          'total_featured_product_home', 'total_latest_product_home', 'total_popular_product_home', 
+          'total_recent_post_footer', 'total_popular_post_footer', 'total_recent_post_sidebar', 'total_popular_post_sidebar',
+          'home_service_on_off', 'home_welcome_on_off', 'home_featured_product_on_off', 
+          'home_latest_product_on_off', 'home_popular_product_on_off', 'home_testimonial_on_off', 
+          'home_blog_on_off', 'newsletter_on_off',
+          'ads_above_welcome_on_off', 'ads_above_featured_product_on_off', 'ads_above_latest_product_on_off',
+          'ads_above_popular_product_on_off', 'ads_above_testimonial_on_off', 'ads_category_sidebar_on_off'
+        ].includes(key)) {
+          payload[key] = parseInt(value) || 0;
+        } else {
+          payload[key] = value;
+        }
+      });
+
+      const btn = form.querySelector('button[type="submit"]');
+      btn.innerText = 'Saving...';
+      try {
+        const res = await fetch('/api/admin/settings', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) showToast('Website configurations updated!');
+      } catch (err) {
+        console.error(err);
+      } finally {
+        btn.innerText = 'Save Settings';
+      }
+    }
+
+    // Dynamic CRUD tables loader
+    async function loadCrudTable(table) {
+      try {
+        let url = `/api/admin/crud?table=${table}`;
+        if (table === 'tbl_product') {
+          url = '/api/products';
+        }
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const banner = document.getElementById('dbOfflineBanner');
+
+        // Handle DB offline (503) or error response
+        if (!res.ok || data.error) {
+          const isOffline = res.status === 503 || (data.error && data.error.includes('offline'));
+          if (banner) banner.style.display = isOffline ? 'flex' : 'none';
+          const tbody = document.getElementById(`${table}_tbody`);
+          if (tbody) {
+            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:24px;">
+              <span style="color:#e74c3c; font-weight:600;">⚠️ Database Offline</span><br>
+              <span style="color:var(--text-muted); font-size:0.85rem; margin-top:6px; display:block;">
+                Start MySQL/XAMPP or connect a cloud database to load data.
+              </span>
+            </td></tr>`;
+          }
+          return;
+        }
+
+        if (banner) banner.style.display = 'none'; // DB is online — hide banner
+
+        const tbody = document.getElementById(`${table}_tbody`);
+        if (!tbody) return;
+
+        let html = '';
+        if (!Array.isArray(data) || data.length === 0) {
+          html = `<tr><td colspan="10" style="text-align:center; color: var(--text-muted);">No records found</td></tr>`;
+          tbody.innerHTML = html;
+          return;
+        }
+
+        if (table === 'tbl_size') {
+          data.forEach((row, i) => {
+            html += `<tr><td>${i+1}</td><td>${row.size_name}</td><td><div class="actions" style="justify-content:center;"><button class="editBtn" onclick="editCrudRecord('tbl_size', ${row.size_id})"><i data-lucide="edit"></i></button><button class="deleteBtn" onclick="deleteCrudRecord('tbl_size', ${row.size_id})"><i data-lucide="trash"></i></button></div></td></tr>`;
+          });
+        } else if (table === 'tbl_color') {
+          data.forEach((row, i) => {
+            html += `<tr><td>${i+1}</td><td>${row.color_name}</td><td><div class="actions" style="justify-content:center;"><button class="editBtn" onclick="editCrudRecord('tbl_color', ${row.color_id})"><i data-lucide="edit"></i></button><button class="deleteBtn" onclick="deleteCrudRecord('tbl_color', ${row.color_id})"><i data-lucide="trash"></i></button></div></td></tr>`;
+          });
+        } else if (table === 'tbl_country') {
+          data.forEach((row, i) => {
+            html += `<tr><td>${i+1}</td><td>${row.country_name}</td><td><div class="actions" style="justify-content:center;"><button class="editBtn" onclick="editCrudRecord('tbl_country', ${row.country_id})"><i data-lucide="edit"></i></button><button class="deleteBtn" onclick="deleteCrudRecord('tbl_country', ${row.country_id})"><i data-lucide="trash"></i></button></div></td></tr>`;
+          });
+        } else if (table === 'tbl_shipping_cost') {
+          data.forEach((row, i) => {
+            html += `<tr><td>${i+1}</td><td>${row.country_name}</td><td>$${parseFloat(row.amount).toFixed(2)}</td><td><div class="actions" style="justify-content:center;"><button class="editBtn" onclick="editCrudRecord('tbl_shipping_cost', ${row.shipping_cost_id})"><i data-lucide="edit"></i></button><button class="deleteBtn" onclick="deleteCrudRecord('tbl_shipping_cost', ${row.shipping_cost_id})"><i data-lucide="trash"></i></button></div></td></tr>`;
+          });
+        } else if (table === 'tbl_top_category') {
+          data.forEach((row, i) => {
+            html += `<tr><td>${i+1}</td><td>${row.tcat_name}</td><td>${row.show_on_menu === 1 ? 'Yes' : 'No'}</td><td><div class="actions" style="justify-content:center;"><button class="editBtn" onclick="editCrudRecord('tbl_top_category', ${row.tcat_id})"><i data-lucide="edit"></i></button><button class="deleteBtn" onclick="deleteCrudRecord('tbl_top_category', ${row.tcat_id})"><i data-lucide="trash"></i></button></div></td></tr>`;
+          });
+        } else if (table === 'tbl_mid_category') {
+          data.forEach((row, i) => {
+            html += `<tr><td>${i+1}</td><td>${row.mcat_name}</td><td>${row.tcat_name}</td><td><div class="actions" style="justify-content:center;"><button class="editBtn" onclick="editCrudRecord('tbl_mid_category', ${row.mcat_id})"><i data-lucide="edit"></i></button><button class="deleteBtn" onclick="deleteCrudRecord('tbl_mid_category', ${row.mcat_id})"><i data-lucide="trash"></i></button></div></td></tr>`;
+          });
+        } else if (table === 'tbl_end_category') {
+          data.forEach((row, i) => {
+            html += `<tr><td>${i+1}</td><td>${row.ecat_name}</td><td>${row.mcat_name}</td><td>${row.tcat_name}</td><td><div class="actions" style="justify-content:center;"><button class="editBtn" onclick="editCrudRecord('tbl_end_category', ${row.ecat_id})"><i data-lucide="edit"></i></button><button class="deleteBtn" onclick="deleteCrudRecord('tbl_end_category', ${row.ecat_id})"><i data-lucide="trash"></i></button></div></td></tr>`;
+          });
+        } else if (table === 'tbl_slider') {
+          data.forEach(row => {
+            html += `<tr><td><img src="/assets/uploads/${row.photo}" style="width: 80px; height: 40px; object-fit: cover; border-radius: 4px;"></td><td>${row.heading}</td><td>${row.subheading}</td><td>${row.button_url}</td><td><div class="actions" style="justify-content:center;"><button class="editBtn" onclick="editCrudRecord('tbl_slider', ${row.id})"><i data-lucide="edit"></i></button><button class="deleteBtn" onclick="deleteCrudRecord('tbl_slider', ${row.id})"><i data-lucide="trash"></i></button></div></td></tr>`;
+          });
+        } else if (table === 'tbl_service') {
+          data.forEach(row => {
+            html += `<tr><td><img src="/assets/uploads/${row.photo}" style="width: 32px; height: 32px; object-fit: contain;"></td><td>${row.title}</td><td>${row.content}</td><td><div class="actions" style="justify-content:center;"><button class="editBtn" onclick="editCrudRecord('tbl_service', ${row.id})"><i data-lucide="edit"></i></button><button class="deleteBtn" onclick="deleteCrudRecord('tbl_service', ${row.id})"><i data-lucide="trash"></i></button></div></td></tr>`;
+          });
+        } else if (table === 'tbl_faq') {
+          data.forEach((row, i) => {
+            html += `<tr><td>${i+1}</td><td>${row.faq_title}</td><td style="color:var(--text-secondary);">${row.faq_content.substring(0, 80)}...</td><td><div class="actions" style="justify-content:center;"><button class="editBtn" onclick="editCrudRecord('tbl_faq', ${row.faq_id})"><i data-lucide="edit"></i></button><button class="deleteBtn" onclick="deleteCrudRecord('tbl_faq', ${row.faq_id})"><i data-lucide="trash"></i></button></div></td></tr>`;
+          });
+        } else if (table === 'tbl_customer') {
+          data.forEach((row, i) => {
+            const btnColor = row.cust_status === 1 ? 'badgeActive' : 'badgeInactive';
+            const btnText = row.cust_status === 1 ? 'Active' : 'Inactive';
+            html += `<tr><td>${i+1}</td><td>${row.cust_name}</td><td>${row.cust_email}</td><td>${row.cust_phone}</td><td>${row.cust_state} / ${row.cust_zip}</td><td><button class="badge ${btnColor}" onclick="toggleCustomerStatus(${row.cust_id}, ${row.cust_status})">${btnText}</button></td><td><div class="actions" style="justify-content:center;"><button class="deleteBtn" onclick="deleteCrudRecord('tbl_customer', ${row.cust_id})"><i data-lucide="trash"></i></button></div></td></tr>`;
+          });
+        } else if (table === 'tbl_subscriber') {
+          data.forEach((row, i) => {
+            html += `<tr><td>${i+1}</td><td>${row.subs_email}</td><td><div class="actions" style="justify-content:center;"><button class="deleteBtn" onclick="deleteCrudRecord('tbl_subscriber', ${row.subs_id})"><i data-lucide="trash"></i></button></div></td></tr>`;
+          });
+        } else if (table === 'tbl_photo') {
+          data.forEach(row => {
+            html += `<tr><td><img src="/assets/uploads/${row.photo}" style="width: 80px; height: 40px; object-fit: cover; border-radius: 4px;"></td><td>${row.caption || ''}</td><td><div class="actions" style="justify-content:center;"><button class="editBtn" onclick="editCrudRecord('tbl_photo', ${row.id})"><i data-lucide="edit"></i></button><button class="deleteBtn" onclick="deleteCrudRecord('tbl_photo', ${row.id})"><i data-lucide="trash"></i></button></div></td></tr>`;
+          });
+        } else if (table === 'tbl_customer_message') {
+          loadCustomerMessages();
+          return;
+        } else if (table === 'tbl_product') {
+          data.forEach(p => {
+            const stockColor = p.p_qty > 20 ? 'inStock' : 'lowStock';
+            html += `
+              <tr>
+                <td><div class="productCell"><img src="/assets/uploads/${p.p_featured_photo}" class="productImg" alt=""><span>${p.p_name}</span></div></td>
+                <td style="color:var(--accent-gold); font-weight:600;">$${parseFloat(p.p_current_price).toFixed(2)}</td>
+                <td><span class="stockBadge ${stockColor}">${p.p_qty} units</span></td>
+                <td style="color:var(--text-secondary);">${p.ecat_name}</td>
+                <td><div class="actions" style="justify-content:center;"><button class="editBtn" onclick="openEditProductForm(${p.p_id})"><i data-lucide="edit"></i></button><button class="deleteBtn" onclick="deleteProduct(${p.p_id})"><i data-lucide="trash"></i></button></div></td>
+              </tr>
+            `;
+          });
+        } else if (table === 'tbl_payment') {
+          // Render Orders list
+          for (let row of data) {
+            // Fetch order items asynchronously or display summary
+            let orderItemsHtml = `<div id="order-items-${row.payment_id}">Loading details...</div>`;
+            fetchOrderItems(row.payment_id);
+            
+            const payStatusBadge = row.payment_status === 'Completed' ? 'badgeActive' : 'badgePending';
+            const shipStatusBadge = row.shipping_status === 'Completed' ? 'badgeActive' : 'badgePending';
+
+            html += `
+              <tr>
+                <td><b>Id:</b> ${row.id}</td>
+                <td><b>Name:</b> ${row.customer_name}<br><b>Email:</b> ${row.customer_email}<br><b>Cust ID:</b> ${row.customer_id}</td>
+                <td>${orderItemsHtml}</td>
+                <td style="font-size:0.85rem; color:var(--text-secondary);">
+                  <b>Method:</b> ${row.payment_method}<br>
+                  <b>Pay ID:</b> ${row.payment_id}<br>
+                  <b>TXN ID:</b> ${row.txnid || 'N/A'}<br>
+                  <b>Date:</b> ${row.payment_date}
+                </td>
+                <td style="color:var(--accent-gold); font-weight:600;">$${row.paid_amount}</td>
+                <td>
+                  <span class="badge ${payStatusBadge}">${row.payment_status}</span><br>
+                  ${row.payment_status === 'Pending' ? `<button class="submitBtn" style="padding:4px 8px; font-size:0.75rem; margin-top:8px; width:100%;" onclick="toggleOrderStatus(${row.id}, 'Completed')">Complete</button>` : ''}
+                </td>
+                <td>
+                  <span class="badge ${shipStatusBadge}">${row.shipping_status}</span><br>
+                  ${row.payment_status === 'Completed' && row.shipping_status === 'Pending' ? `<button class="submitBtn" style="padding:4px 8px; font-size:0.75rem; margin-top:8px; width:100%; background:var(--accent-gold);" onclick="toggleShippingStatus(${row.id}, 'Completed')">Ship Order</button>` : ''}
+                </td>
+                <td>
+                  <div class="actions" style="justify-content:center;">
+                    <button class="deleteBtn" onclick="deleteCrudRecord('tbl_payment', ${row.id})"><i data-lucide="trash"></i></button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }
+        }
+
+        tbody.innerHTML = html;
+        lucide.createIcons();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Async Fetch Order Line items
+    async function fetchOrderItems(paymentId) {
+      try {
+        const res = await fetch(`/api/admin/crud?table=tbl_order&payment_id=${paymentId}`);
+        const data = await res.json();
+        const div = document.getElementById(`order-items-${paymentId}`);
+        if (!div || !res.ok) return;
+
+        let html = '';
+        data.forEach(item => {
+          html += `<b>${item.product_name}</b><br>(Size: ${item.size}, Color: ${item.color})<br>Qty: ${item.quantity} × $${item.unit_price}<br><br>`;
+        });
+        div.innerHTML = html || 'No products listed';
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Toggle Customer Status
+    async function toggleCustomerStatus(id, currentStatus) {
+      const nextStatus = currentStatus === 1 ? 0 : 1;
+      try {
+        const res = await fetch(`/api/admin/crud?table=tbl_customer`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cust_id: id, cust_status: nextStatus })
+        });
+        if (res.ok) {
+          showToast('Customer status updated!');
+          loadCrudTable('tbl_customer');
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Toggle Order Status
+    async function toggleOrderStatus(id, status) {
+      try {
+        const res = await fetch(`/api/admin/crud?table=tbl_payment`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, payment_status: status })
+        });
+        if (res.ok) {
+          showToast('Payment status marked as Completed!');
+          loadCrudTable('tbl_payment');
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Toggle Shipping Status
+    async function toggleShippingStatus(id, status) {
+      try {
+        const res = await fetch(`/api/admin/crud?table=tbl_payment`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, shipping_status: status })
+        });
+        if (res.ok) {
+          showToast('Order marked as Shipped!');
+          loadCrudTable('tbl_payment');
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Open/Close Generic CRUD Modals
+    window.openCrudModal = async function(table, id = null) {
+      currentTable = table;
+      currentId = id;
+      document.getElementById('crudForm').reset();
+      
+      const container = document.getElementById('crudFieldsContainer');
+      let html = '';
+
+      if (id) {
+        document.getElementById('crudModalTitle').innerText = 'Edit Record';
+        // Fetch current values
+        const res = await fetch(`/api/admin/crud?table=${table}`);
+        const rows = await res.json();
+        const pkMap = {
+          tbl_size: 'size_id',
+          tbl_color: 'color_id',
+          tbl_country: 'country_id',
+          tbl_shipping_cost: 'shipping_cost_id',
+          tbl_top_category: 'tcat_id',
+          tbl_mid_category: 'mcat_id',
+          tbl_end_category: 'ecat_id',
+          tbl_slider: 'id',
+          tbl_service: 'id',
+          tbl_faq: 'faq_id',
+          tbl_photo: 'id'
+        };
+        const activeRow = rows.find(r => r[pkMap[table]] === id);
+        
+        if (table === 'tbl_size') {
+          html = `<div class="inputGroup"><label>Size Name</label><input type="text" name="size_name" value="${activeRow.size_name}" required></div>`;
+        } else if (table === 'tbl_color') {
+          html = `<div class="inputGroup"><label>Color Name</label><input type="text" name="color_name" value="${activeRow.color_name}" required></div>`;
+        } else if (table === 'tbl_country') {
+          html = `<div class="inputGroup"><label>Country Name</label><input type="text" name="country_name" value="${activeRow.country_name}" required></div>`;
+        } else if (table === 'tbl_shipping_cost') {
+          const countries = await (await fetch('/api/admin/crud?table=tbl_country')).json();
+          let opt = '';
+          countries.forEach(c => {
+            opt += `<option value="${c.country_id}" ${c.country_id === activeRow.country_id ? 'selected' : ''}>${c.country_name}</option>`;
+          });
+          html = `
+            <div class="inputGroup"><label>Country</label><select name="country_id" required>${opt}</select></div>
+            <div class="inputGroup"><label>Shipping Cost ($)</label><input type="number" step="0.01" name="amount" value="${activeRow.amount}" required></div>
+          `;
+        } else if (table === 'tbl_top_category') {
+          html = `
+            <div class="inputGroup"><label>Category Name</label><input type="text" name="tcat_name" value="${activeRow.tcat_name}" required></div>
+            <div class="inputGroup"><label>Show on Menu</label><select name="show_on_menu"><option value="1" ${activeRow.show_on_menu === 1 ? 'selected' : ''}>Show</option><option value="0" ${activeRow.show_on_menu === 0 ? 'selected' : ''}>Hide</option></select></div>
+          `;
+        } else if (table === 'tbl_mid_category') {
+          const tops = await (await fetch('/api/admin/crud?table=tbl_top_category')).json();
+          let opt = '';
+          tops.forEach(t => { opt += `<option value="${t.tcat_id}" ${t.tcat_id === activeRow.tcat_id ? 'selected' : ''}>${t.tcat_name}</option>`; });
+          html = `
+            <div class="inputGroup"><label>Top Level Category</label><select name="tcat_id" required>${opt}</select></div>
+            <div class="inputGroup"><label>Mid Category Name</label><input type="text" name="mcat_name" value="${activeRow.mcat_name}" required></div>
+          `;
+        } else if (table === 'tbl_end_category') {
+          const mids = await (await fetch('/api/admin/crud?table=tbl_mid_category')).json();
+          let opt = '';
+          mids.forEach(m => { opt += `<option value="${m.mcat_id}" ${m.mcat_id === activeRow.mcat_id ? 'selected' : ''}>${m.tcat_name} &gt; ${m.mcat_name}</option>`; });
+          html = `
+            <div class="inputGroup"><label>Parent Mid Category</label><select name="mcat_id" required>${opt}</select></div>
+            <div class="inputGroup"><label>End Category Name</label><input type="text" name="ecat_name" value="${activeRow.ecat_name}" required></div>
+          `;
+        } else if (table === 'tbl_slider') {
+          html = `
+            <div class="inputGroup">
+              <label>Slider Image</label>
+              <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                <img id="preview_slider_img" src="/assets/uploads/${activeRow.photo}" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px;">
+                <input type="text" id="set_slider_photo" name="photo" value="${activeRow.photo}" readonly style="width:180px;" required>
+                <input type="file" accept="image/*" id="file_slider_photo" style="display:none;" onchange="handleFileSelect(this, 'set_slider_photo', 'preview_slider_img')">
+                <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_slider_photo').click()"><i data-lucide="upload"></i> Upload</button>
+              </div>
+            </div>
+            <div class="inputGroup"><label>Heading</label><input type="text" name="heading" value="${activeRow.heading}" required></div>
+            <div class="inputGroup"><label>Subheading</label><input type="text" name="subheading" value="${activeRow.subheading}" required></div>
+            <div class="inputGroup"><label>Button Text</label><input type="text" name="button_text" value="${activeRow.button_text || ''}"></div>
+            <div class="inputGroup"><label>Button URL</label><input type="text" name="button_url" value="${activeRow.button_url || ''}"></div>
+          `;
+        } else if (table === 'tbl_service') {
+          html = `
+            <div class="inputGroup">
+              <label>Service Icon Image</label>
+              <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                <img id="preview_service_icon" src="/assets/uploads/${activeRow.photo}" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px;">
+                <input type="text" id="set_service_photo" name="photo" value="${activeRow.photo}" readonly style="width:180px;" required>
+                <input type="file" accept="image/*" id="file_service_photo" style="display:none;" onchange="handleFileSelect(this, 'set_service_photo', 'preview_service_icon')">
+                <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_service_photo').click()"><i data-lucide="upload"></i> Upload</button>
+              </div>
+            </div>
+            <div class="inputGroup"><label>Service Title</label><input type="text" name="title" value="${activeRow.title}" required></div>
+            <div class="inputGroup"><label>Description Slogan</label><input type="text" name="content" value="${activeRow.content}" required></div>
+          `;
+        } else if (table === 'tbl_photo') {
+          html = `
+            <div class="inputGroup"><label>Caption</label><input type="text" name="caption" value="${activeRow.caption}" required></div>
+            <div class="inputGroup">
+              <label>Gallery Image</label>
+              <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                <img id="preview_gallery_img" src="/assets/uploads/${activeRow.photo}" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px;">
+                <input type="text" id="set_gallery_photo" name="photo" value="${activeRow.photo}" readonly style="width:180px;" required>
+                <input type="file" accept="image/*" id="file_gallery_photo" style="display:none;" onchange="handleFileSelect(this, 'set_gallery_photo', 'preview_gallery_img')">
+                <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_gallery_photo').click()"><i data-lucide="upload"></i> Upload</button>
+              </div>
+            </div>
+          `;
+        } else if (table === 'tbl_faq') {
+          html = `
+            <div class="inputGroup"><label>Question Title</label><input type="text" name="faq_title" value="${activeRow.faq_title}" required></div>
+            <div class="inputGroup"><label>Answer Body</label><textarea name="faq_content" rows="4" required>${activeRow.faq_content}</textarea></div>
+          `;
+        }
+      } else {
+        document.getElementById('crudModalTitle').innerText = 'Add Record';
+        
+        if (table === 'tbl_size') {
+          html = `<div class="inputGroup"><label>Size Name</label><input type="text" name="size_name" placeholder="e.g. S, M, L, XL" required></div>`;
+        } else if (table === 'tbl_color') {
+          html = `<div class="inputGroup"><label>Color Name</label><input type="text" name="color_name" placeholder="e.g. Black, Red, Blue" required></div>`;
+        } else if (table === 'tbl_country') {
+          html = `<div class="inputGroup"><label>Country Name</label><input type="text" name="country_name" required></div>`;
+        } else if (table === 'tbl_shipping_cost') {
+          const countries = await (await fetch('/api/admin/crud?table=tbl_country')).json();
+          let opt = '';
+          countries.forEach(c => { opt += `<option value="${c.country_id}">${c.country_name}</option>`; });
+          html = `
+            <div class="inputGroup"><label>Country</label><select name="country_id" required>${opt}</select></div>
+            <div class="inputGroup"><label>Shipping Cost ($)</label><input type="number" step="0.01" name="amount" required></div>
+          `;
+        } else if (table === 'tbl_top_category') {
+          html = `
+            <div class="inputGroup"><label>Category Name</label><input type="text" name="tcat_name" required></div>
+            <div class="inputGroup"><label>Show on Menu</label><select name="show_on_menu"><option value="1">Show</option><option value="0">Hide</option></select></div>
+          `;
+        } else if (table === 'tbl_mid_category') {
+          const tops = await (await fetch('/api/admin/crud?table=tbl_top_category')).json();
+          let opt = '';
+          tops.forEach(t => { opt += `<option value="${t.tcat_id}">${t.tcat_name}</option>`; });
+          html = `
+            <div class="inputGroup"><label>Top Level Category</label><select name="tcat_id" required>${opt}</select></div>
+            <div class="inputGroup"><label>Mid Category Name</label><input type="text" name="mcat_name" required></div>
+          `;
+        } else if (table === 'tbl_end_category') {
+          const mids = await (await fetch('/api/admin/crud?table=tbl_mid_category')).json();
+          let opt = '';
+          mids.forEach(m => { opt += `<option value="${m.mcat_id}">${m.tcat_name} &gt; ${m.mcat_name}</option>`; });
+          html = `
+            <div class="inputGroup"><label>Parent Mid Category</label><select name="mcat_id" required>${opt}</select></div>
+            <div class="inputGroup"><label>End Category Name</label><input type="text" name="ecat_name" required></div>
+          `;
+        } else if (table === 'tbl_slider') {
+          html = `
+            <div class="inputGroup">
+              <label>Slider Image</label>
+              <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                <img id="preview_slider_img" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                <input type="text" id="set_slider_photo" name="photo" readonly style="width:180px;" required>
+                <input type="file" accept="image/*" id="file_slider_photo" style="display:none;" onchange="handleFileSelect(this, 'set_slider_photo', 'preview_slider_img')">
+                <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_slider_photo').click()"><i data-lucide="upload"></i> Upload</button>
+              </div>
+            </div>
+            <div class="inputGroup"><label>Heading</label><input type="text" name="heading" required></div>
+            <div class="inputGroup"><label>Subheading</label><input type="text" name="subheading" required></div>
+            <div class="inputGroup"><label>Button Text</label><input type="text" name="button_text"></div>
+            <div class="inputGroup"><label>Button URL</label><input type="text" name="button_url"></div>
+          `;
+        } else if (table === 'tbl_service') {
+          html = `
+            <div class="inputGroup">
+              <label>Service Icon Image</label>
+              <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                <img id="preview_service_icon" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                <input type="text" id="set_service_photo" name="photo" readonly style="width:180px;" required>
+                <input type="file" accept="image/*" id="file_service_photo" style="display:none;" onchange="handleFileSelect(this, 'set_service_photo', 'preview_service_icon')">
+                <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_service_photo').click()"><i data-lucide="upload"></i> Upload</button>
+              </div>
+            </div>
+            <div class="inputGroup"><label>Service Title</label><input type="text" name="title" required></div>
+            <div class="inputGroup"><label>Description Slogan</label><input type="text" name="content" required></div>
+          `;
+        } else if (table === 'tbl_photo') {
+          html = `
+            <div class="inputGroup"><label>Caption</label><input type="text" name="caption" placeholder="Gallery photo caption" required></div>
+            <div class="inputGroup">
+              <label>Gallery Image</label>
+              <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+                <img id="preview_gallery_img" src="" style="height:40px; border: 1px solid var(--glass-border); padding:4px; border-radius:4px; display:none;">
+                <input type="text" id="set_gallery_photo" name="photo" readonly style="width:180px;" required>
+                <input type="file" accept="image/*" id="file_gallery_photo" style="display:none;" onchange="handleFileSelect(this, 'set_gallery_photo', 'preview_gallery_img')">
+                <button type="button" class="addBtn" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('file_gallery_photo').click()"><i data-lucide="upload"></i> Upload</button>
+              </div>
+            </div>
+          `;
+        } else if (table === 'tbl_faq') {
+          html = `
+            <div class="inputGroup"><label>Question Title</label><input type="text" name="faq_title" required></div>
+            <div class="inputGroup"><label>Answer Body</label><textarea name="faq_content" rows="4" required></textarea></div>
+          `;
+        }
+      }
+
+      container.innerHTML = html;
+      document.getElementById('crudModal').style.display = 'flex';
+      lucide.createIcons();
+    }
+
+    function closeCrudModal() {
+      document.getElementById('crudModal').style.display = 'none';
+    }
+
+    // Submit Generic CRUD form
+    async function submitCrudForm(e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const payload = {};
+      
+      formData.forEach((value, key) => {
+        // Parse select parameters to ints
+        if (['country_id', 'tcat_id', 'mcat_id', 'show_on_menu'].includes(key)) {
+          payload[key] = parseInt(value);
+        } else if (key === 'amount') {
+          payload[key] = parseFloat(value);
+        } else {
+          payload[key] = value;
+        }
+      });
+
+      let method = 'POST';
+      if (currentId) {
+        method = 'PUT';
+        const pkMap = {
+          tbl_size: 'size_id',
+          tbl_color: 'color_id',
+          tbl_country: 'country_id',
+          tbl_shipping_cost: 'shipping_cost_id',
+          tbl_top_category: 'tcat_id',
+          tbl_mid_category: 'mcat_id',
+          tbl_end_category: 'ecat_id',
+          tbl_slider: 'id',
+          tbl_service: 'id',
+          tbl_faq: 'faq_id',
+          tbl_photo: 'id'
+        };
+        payload[pkMap[currentTable]] = currentId;
+      }
+
+      try {
+        const res = await fetch(`/api/admin/crud?table=${currentTable}`, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          closeCrudModal();
+          showToast('Record saved successfully!');
+          loadCrudTable(currentTable);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Edit crud record trigger
+    window.editCrudRecord = function(table, id) {
+      openCrudModal(table, id);
+    }
+
+    // Delete crud record trigger
+    window.deleteCrudRecord = async function(table, id) {
+      if (!confirm('Are you sure you want to delete this record?')) return;
+      try {
+        const res = await fetch(`/api/admin/crud?table=${table}&id=${id}`, {
+          method: 'DELETE'
+        });
+        if (res.ok) {
+          showToast('Record deleted!');
+          loadCrudTable(table);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Socials GET/PUT
+    async function loadSocials() {
+      try {
+        const res = await fetch('/api/admin/crud?table=tbl_social');
+        const data = await res.json();
+        if (!res.ok) return;
+
+        let html = '';
+        data.forEach(item => {
+          html += `
+            <div class="inputGroup">
+              <label>${item.social_name}</label>
+              <input type="text" name="${item.social_name}" data-id="${item.social_id}" value="${item.social_url || ''}">
+            </div>
+          `;
+        });
+        document.getElementById('socialsContainer').innerHTML = html;
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function saveSocials(e) {
+      e.preventDefault();
+      const container = document.getElementById('socialsContainer');
+      const inputs = container.querySelectorAll('input');
+      
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.innerText = 'Saving...';
+
+      try {
+        for (let input of inputs) {
+          const id = parseInt(input.getAttribute('data-id'));
+          const url = input.value.trim();
+          await fetch('/api/admin/crud?table=tbl_social', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ social_id: id, social_url: url })
+          });
+        }
+        showToast('Social media links updated!');
+      } catch (err) {
+        console.error(err);
+      } finally {
+        submitBtn.innerText = 'Save Channels';
+      }
+    }
+
+    // Subscriber CSV Download
+    window.exportSubscribers = async function() {
+      try {
+        const res = await fetch('/api/admin/crud?table=tbl_subscriber');
+        const data = await res.json();
+        if (!res.ok) return;
+
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "ID,Subscriber Email\n";
+        data.forEach((row, i) => {
+          csvContent += `${row.subs_id},"${row.subs_email}"\n`;
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "croppro_subscribers.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Custom Detailed Product forms
+    let allTopCats = [];   // cached category data for cascade
+
+    async function openAddProductForm() {
+      editMode = false;
+      document.getElementById('productForm').reset();
+      document.getElementById('p_id').value = '';
+      document.getElementById('productModalTitle').innerText = 'Add Product';
+      document.getElementById('p_photo').value = '';
+      document.getElementById('preview_product_photo').style.display = 'none';
+      document.getElementById('preview_product_photo').src = '';
+      document.getElementById('otherPhotosList').innerHTML = '';
+      
+      await loadTopCatDropdown();
+      await loadSizesColorsDropdown();
+      document.getElementById('productModal').style.display = 'flex';
+      lucide.createIcons();
+    }
+
+    async function openEditProductForm(id) {
+      editMode = true;
+      document.getElementById('productModalTitle').innerText = 'Edit Product';
+      document.getElementById('p_id').value = id;
+      document.getElementById('otherPhotosList').innerHTML = '<span style="opacity:0.6;font-size:0.8rem;">Loading...</span>';
+      document.getElementById('productModal').style.display = 'flex';
+
+      await loadTopCatDropdown();
+      await loadSizesColorsDropdown();
+
+      // Fetch full product details including assigned sizes/colors/photos
+      const res = await fetch(`/api/admin/product-options?product_id=${id}`);
+      const data = await res.json();
+      if (data.error) { showToast('Could not load product: ' + data.error); return; }
+
+      const p = data.product;
+
+      // Populate text/number fields
+      document.getElementById('p_name').value = p.p_name || '';
+      document.getElementById('p_price').value = p.p_current_price || '';
+      document.getElementById('p_old_price').value = p.p_old_price || '';
+      document.getElementById('p_qty').value = p.p_qty || '';
+      document.getElementById('p_slogan').value = p.p_short_description || '';
+      document.getElementById('p_features').value = p.p_feature || '';
+      document.getElementById('p_desc').value = p.p_description || '';
+      document.getElementById('p_condition').value = p.p_condition || '';
+      document.getElementById('p_return_policy').value = p.p_return_policy || '';
+      document.getElementById('p_is_featured').value = String(p.p_is_featured ?? 0);
+      document.getElementById('p_is_active').value = String(p.p_is_active ?? 1);
+      document.getElementById('p_photo').value = p.p_featured_photo || '';
+
+      // Photo preview
+      if (p.p_featured_photo) {
+        document.getElementById('preview_product_photo').src = '/assets/uploads/' + p.p_featured_photo;
+        document.getElementById('preview_product_photo').style.display = 'block';
+      } else {
+        document.getElementById('preview_product_photo').style.display = 'none';
+      }
+
+      // 3-level category cascade: find which top/mid contains this ecat_id
+      const ecat_id = p.ecat_id;
+      await loadTopCatDropdown();
+      // Find the tcat/mcat for this ecat
+      let foundTcat = '', foundMcat = '';
+      for (const top of allTopCats) {
+        for (const mid of (top.mid_categories || [])) {
+          for (const end of (mid.end_categories || [])) {
+            if (end.ecat_id == ecat_id) {
+              foundTcat = top.tcat_id;
+              foundMcat = mid.mcat_id;
+            }
+          }
+        }
+      }
+      if (foundTcat) {
+        document.getElementById('p_top_cat').value = foundTcat;
+        await loadMidCats(foundTcat);
+        document.getElementById('p_mid_cat').value = foundMcat;
+        await loadEndCats(foundMcat);
+        document.getElementById('p_category').value = ecat_id;
+      }
+
+      // Pre-select sizes
+      const assignedSizes = p.assigned_sizes || [];
+      const sizeSel = document.getElementById('p_sizes');
+      for (const opt of sizeSel.options) {
+        opt.selected = assignedSizes.includes(parseInt(opt.value));
+      }
+
+      // Pre-select colors
+      const assignedColors = p.assigned_colors || [];
+      const colorSel = document.getElementById('p_colors');
+      for (const opt of colorSel.options) {
+        opt.selected = assignedColors.includes(parseInt(opt.value));
+      }
+
+      // Render other photos
+      const othersDiv = document.getElementById('otherPhotosList');
+      othersDiv.innerHTML = '';
+      if (p.other_photos && p.other_photos.length > 0) {
+        p.other_photos.forEach(ph => {
+          const wrap = document.createElement('div');
+          wrap.style.cssText = 'position:relative;display:inline-block;';
+          wrap.innerHTML = `<img src="/assets/uploads/product_photos/${ph.photo}" style="width:70px;height:70px;object-fit:cover;border-radius:6px;border:1px solid var(--glass-border);">`;
+          othersDiv.appendChild(wrap);
+        });
+      } else {
+        othersDiv.innerHTML = '<span style="opacity:0.6;font-size:0.8rem;">No gallery photos yet</span>';
+      }
+
+      lucide.createIcons();
+    }
+
+    async function loadTopCatDropdown() {
+      if (allTopCats.length === 0) {
+        const res = await fetch('/api/categories');
+        allTopCats = await res.json();
+      }
+      const sel = document.getElementById('p_top_cat');
+      const current = sel.value;
+      sel.innerHTML = '<option value="">Select Top Category</option>';
+      allTopCats.forEach(top => {
+        const opt = document.createElement('option');
+        opt.value = top.tcat_id;
+        opt.text = top.tcat_name;
+        sel.appendChild(opt);
+      });
+      if (current) sel.value = current;
+    }
+
+    async function loadMidCats(tcat_id) {
+      const midSel = document.getElementById('p_mid_cat');
+      const endSel = document.getElementById('p_category');
+      midSel.innerHTML = '<option value="">Select Mid Category</option>';
+      endSel.innerHTML = '<option value="">Select End Category</option>';
+      if (!tcat_id) return;
+      const top = allTopCats.find(t => t.tcat_id == tcat_id);
+      if (!top) return;
+      (top.mid_categories || []).forEach(mid => {
+        const opt = document.createElement('option');
+        opt.value = mid.mcat_id;
+        opt.text = mid.mcat_name;
+        midSel.appendChild(opt);
+      });
+    }
+
+    async function loadEndCats(mcat_id) {
+      const endSel = document.getElementById('p_category');
+      endSel.innerHTML = '<option value="">Select End Category</option>';
+      if (!mcat_id) return;
+      const topCat = allTopCats.find(t => (t.mid_categories || []).some(m => m.mcat_id == mcat_id));
+      if (!topCat) return;
+      const mid = topCat.mid_categories.find(m => m.mcat_id == mcat_id);
+      if (!mid) return;
+      (mid.end_categories || []).forEach(end => {
+        const opt = document.createElement('option');
+        opt.value = end.ecat_id;
+        opt.text = end.ecat_name;
+        endSel.appendChild(opt);
+      });
+    }
+
+    async function loadSizesColorsDropdown() {
+      const res = await fetch('/api/admin/product-options');
+      const data = await res.json();
+
+      const sizeSel = document.getElementById('p_sizes');
+      sizeSel.innerHTML = '';
+      (data.sizes || []).forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.size_id;
+        opt.text = s.size_name;
+        sizeSel.appendChild(opt);
+      });
+
+      const colorSel = document.getElementById('p_colors');
+      colorSel.innerHTML = '';
+      (data.colors || []).forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.color_id;
+        opt.text = c.color_name;
+        colorSel.appendChild(opt);
+      });
+    }
+
+    async function handleOtherPhotosSelect(input) {
+      const list = document.getElementById('otherPhotosList');
+      for (const file of input.files) {
+        try {
+          const uploaded = await uploadFile(file);
+          const wrap = document.createElement('div');
+          wrap.style.cssText = 'position:relative;display:inline-block;';
+          wrap.innerHTML = `<img src="${uploaded.url}" style="width:70px;height:70px;object-fit:cover;border-radius:6px;border:1px solid var(--glass-border);">`;
+          wrap.dataset.filename = uploaded.filename;
+          list.appendChild(wrap);
+        } catch(e) {
+          console.error('Other photo upload failed', e);
+        }
+      }
+    }
+
+    async function submitProductForm(e) {
+      e.preventDefault();
+      const id = document.getElementById('p_id').value;
+      
+      const ecatVal = document.getElementById('p_category').value;
+      if (!ecatVal) { showToast('Please select all three category levels.'); return; }
+
+      // Collect selected sizes
+      const sizesSel = document.getElementById('p_sizes');
+      const sizes = Array.from(sizesSel.selectedOptions).map(o => parseInt(o.value));
+
+      // Collect selected colors
+      const colorsSel = document.getElementById('p_colors');
+      const colors = Array.from(colorsSel.selectedOptions).map(o => parseInt(o.value));
+
+      const payload = {
+        name: document.getElementById('p_name').value.trim(),
+        current_price: parseFloat(document.getElementById('p_price').value),
+        old_price: document.getElementById('p_old_price').value ? parseFloat(document.getElementById('p_old_price').value) : null,
+        qty: parseInt(document.getElementById('p_qty').value),
+        ecat_id: parseInt(ecatVal),
+        short_description: document.getElementById('p_slogan').value.trim(),
+        feature: document.getElementById('p_features').value.trim(),
+        description: document.getElementById('p_desc').value.trim(),
+        condition: document.getElementById('p_condition').value.trim(),
+        return_policy: document.getElementById('p_return_policy').value.trim(),
+        is_featured: document.getElementById('p_is_featured').value,
+        is_active: document.getElementById('p_is_active').value,
+        featured_photo: document.getElementById('p_photo').value.trim(),
+        sizes,
+        colors
+      };
+
+      let url = '/api/admin/products';
+      let method = 'POST';
+
+      if (editMode) {
+        payload.id = parseInt(id);
+        method = 'PUT';
+      }
+
+      try {
+        const res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (res.ok) {
+          document.getElementById('productModal').style.display = 'none';
+          showToast('Product saved successfully!');
+          allTopCats = []; // reset cache
+          loadCrudTable('tbl_product');
+        } else {
+          showToast('Error: ' + (result.error || 'Could not save product'));
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Network error while saving product');
+      }
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm('Are you sure you want to delete this product? This cannot be undone.')) return;
+      try {
+        const res = await fetch(`/api/admin/products?id=${id}`, {
+          method: 'DELETE'
+        });
+        if (res.ok) {
+          showToast('Product deleted!');
+          loadCrudTable('tbl_product');
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // File upload helpers
+    async function uploadFile(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData
+      });
+      if (!res.ok) {
+        throw new Error('Upload failed');
+      }
+      return await res.json();
+    }
+
+    async function handleFileSelect(input, textInputId, previewImgId) {
+      if (!input.files || input.files.length === 0) return;
+      const file = input.files[0];
+      try {
+        showToast('Uploading file...');
+        const data = await uploadFile(file);
+        if (data.success) {
+          document.getElementById(textInputId).value = data.filename;
+          if (previewImgId) {
+            const img = document.getElementById(previewImgId);
+            img.src = '/assets/uploads/' + data.filename;
+            img.style.display = 'block';
+          }
+          showToast('File uploaded successfully!');
+        } else {
+          showToast('Upload error: ' + (data.error || 'Unknown error'));
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Failed to upload file.');
+      }
+    }
+
+    // Page settings helpers
+    function switchPageSettingTab(tabId, btn) {
+      document.querySelectorAll('#panePageSettings .settingsTabBtn').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('#panePageSettings .pageSettingContent').forEach(el => el.style.display = 'none');
+      btn.classList.add('active');
+      document.getElementById(tabId).style.display = 'block';
+    }
+
+    async function loadPageSettings() {
+      try {
+        const res = await fetch('/api/admin/crud?table=tbl_page');
+        const data = await res.json();
+        if (!res.ok || data.length === 0) return;
+        const row = data[0];
+        
+        // About Us
+        document.getElementById('page_about_title').value = row.about_title || '';
+        document.getElementById('page_about_content').value = row.about_content || '';
+        document.getElementById('page_about_banner').value = row.about_banner || '';
+        if (row.about_banner) {
+          document.getElementById('preview_page_about_banner').src = '/assets/uploads/' + row.about_banner;
+          document.getElementById('preview_page_about_banner').style.display = 'block';
+        } else {
+          document.getElementById('preview_page_about_banner').style.display = 'none';
+        }
+        document.getElementById('page_about_meta_title').value = row.about_meta_title || '';
+        document.getElementById('page_about_meta_keyword').value = row.about_meta_keyword || '';
+        document.getElementById('page_about_meta_description').value = row.about_meta_description || '';
+
+        // FAQ
+        document.getElementById('page_faq_title').value = row.faq_title || '';
+        document.getElementById('page_faq_banner').value = row.faq_banner || '';
+        if (row.faq_banner) {
+          document.getElementById('preview_page_faq_banner').src = '/assets/uploads/' + row.faq_banner;
+          document.getElementById('preview_page_faq_banner').style.display = 'block';
+        } else {
+          document.getElementById('preview_page_faq_banner').style.display = 'none';
+        }
+        document.getElementById('page_faq_meta_title').value = row.faq_meta_title || '';
+        document.getElementById('page_faq_meta_keyword').value = row.faq_meta_keyword || '';
+        document.getElementById('page_faq_meta_description').value = row.faq_meta_description || '';
+
+        // Contact
+        document.getElementById('page_contact_title').value = row.contact_title || '';
+        document.getElementById('page_contact_banner').value = row.contact_banner || '';
+        if (row.contact_banner) {
+          document.getElementById('preview_page_contact_banner').src = '/assets/uploads/' + row.contact_banner;
+          document.getElementById('preview_page_contact_banner').style.display = 'block';
+        } else {
+          document.getElementById('preview_page_contact_banner').style.display = 'none';
+        }
+        document.getElementById('page_contact_meta_title').value = row.contact_meta_title || '';
+        document.getElementById('page_contact_meta_keyword').value = row.contact_meta_keyword || '';
+        document.getElementById('page_contact_meta_description').value = row.contact_meta_description || '';
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function savePageSettings(e, pageType) {
+      e.preventDefault();
+      const payload = { id: 1 };
+      
+      if (pageType === 'about') {
+        payload.about_title = document.getElementById('page_about_title').value.trim();
+        payload.about_content = document.getElementById('page_about_content').value.trim();
+        payload.about_banner = document.getElementById('page_about_banner').value.trim();
+        payload.about_meta_title = document.getElementById('page_about_meta_title').value.trim();
+        payload.about_meta_keyword = document.getElementById('page_about_meta_keyword').value.trim();
+        payload.about_meta_description = document.getElementById('page_about_meta_description').value.trim();
+      } else if (pageType === 'faq') {
+        payload.faq_title = document.getElementById('page_faq_title').value.trim();
+        payload.faq_banner = document.getElementById('page_faq_banner').value.trim();
+        payload.faq_meta_title = document.getElementById('page_faq_meta_title').value.trim();
+        payload.faq_meta_keyword = document.getElementById('page_faq_meta_keyword').value.trim();
+        payload.faq_meta_description = document.getElementById('page_faq_meta_description').value.trim();
+      } else if (pageType === 'contact') {
+        payload.contact_title = document.getElementById('page_contact_title').value.trim();
+        payload.contact_banner = document.getElementById('page_contact_banner').value.trim();
+        payload.contact_meta_title = document.getElementById('page_contact_meta_title').value.trim();
+        payload.contact_meta_keyword = document.getElementById('page_contact_meta_keyword').value.trim();
+        payload.contact_meta_description = document.getElementById('page_contact_meta_description').value.trim();
+      }
+      
+      try {
+        const res = await fetch('/api/admin/crud?table=tbl_page', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          showToast('Page settings saved!');
+          loadPageSettings();
+        } else {
+          showToast('Failed to save page settings.');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Error saving page settings.');
+      }
+    }
+
+    // Customer Messages helper
+    async function loadCustomerMessages() {
+      try {
+        const res = await fetch('/api/admin/crud?table=tbl_customer_message');
+        const data = await res.json();
+        if (!res.ok) return;
+        
+        const tbody = document.getElementById('tbl_customer_message_tbody');
+        if (!tbody) return;
+        
+        let html = '';
+        if (data.length === 0) {
+          html = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">No messages found</td></tr>`;
+          tbody.innerHTML = html;
+          return;
+        }
+        
+        data.forEach(row => {
+          html += `
+            <tr>
+              <td>${row.cust_name || 'Guest'}</td>
+              <td>${row.cust_email || 'N/A'}</td>
+              <td>${row.subject || ''}</td>
+              <td style="white-space: pre-wrap; font-size:0.9rem; color:var(--text-secondary); max-width:300px;">${row.message || ''}</td>
+              <td style="white-space: pre-wrap; font-size:0.9rem; color:var(--text-secondary); max-width:200px;">${row.order_detail || 'N/A'}</td>
+              <td style="text-align:center;">
+                <div class="actions" style="justify-content:center;">
+                  <button class="deleteBtn" onclick="deleteCrudRecord('tbl_customer_message', ${row.customer_message_id})"><i data-lucide="trash"></i></button>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+        lucide.createIcons();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Language settings helpers
+    let allLanguages = [];
+
+    async function loadLanguageSettings() {
+      try {
+        const res = await fetch('/api/admin/crud?table=tbl_language');
+        allLanguages = await res.json();
+        renderLanguageTable();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderLanguageTable() {
+      const tbody = document.getElementById('tbl_language_tbody');
+      if (!tbody) return;
+      
+      const query = document.getElementById('langSearchInput').value.toLowerCase().trim();
+      let html = '';
+      
+      const filtered = allLanguages.filter(row => {
+        return (row.lang_name && row.lang_name.toLowerCase().includes(query)) || 
+               (row.lang_value && row.lang_value.toLowerCase().includes(query));
+      });
+      
+      if (filtered.length === 0) {
+        html = `<tr><td colspan="4" style="text-align:center; color: var(--text-muted);">No matching translations found</td></tr>`;
+        tbody.innerHTML = html;
+        return;
+      }
+      
+      filtered.forEach(row => {
+        html += `
+          <tr>
+            <td>${row.lang_id}</td>
+            <td style="font-weight:600; color:var(--accent-gold);">${row.lang_name}</td>
+            <td>${row.lang_value || ''}</td>
+            <td style="text-align:center;">
+              <div class="actions" style="justify-content:center;">
+                <button class="editBtn" onclick="editLanguageWord(${row.lang_id}, '${row.lang_name.replace(/'/g, "\\'")}')"><i data-lucide="edit"></i></button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    function filterLanguageTable() {
+      renderLanguageTable();
+    }
+
+    async function editLanguageWord(id, keyName) {
+      const row = allLanguages.find(r => r.lang_id === id);
+      if (!row) return;
+      const newValue = prompt(`Update Translation for "${keyName}":`, row.lang_value || '');
+      if (newValue === null) return;
+      
+      try {
+        const res = await fetch('/api/admin/crud?table=tbl_language', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lang_id: id, lang_value: newValue })
+        });
+        if (res.ok) {
+          showToast('Translation updated!');
+          loadLanguageSettings();
+        } else {
+          showToast('Failed to update translation.');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Error updating translation.');
+      }
+    }
+
+    // Admin profile helpers
+    async function loadAdminProfile() {
+      try {
+        const user = localStorage.getItem('croppro_user');
+        if (!user) return;
+        const parsed = JSON.parse(user);
+        const adminId = parsed.cust_id;
+        
+        const res = await fetch('/api/admin/crud?table=tbl_user');
+        const data = await res.json();
+        if (!res.ok) return;
+        
+        const adminUser = data.find(u => u.id === adminId);
+        if (!adminUser) return;
+        
+        document.getElementById('profile_name').value = adminUser.full_name || '';
+        document.getElementById('profile_email').value = adminUser.email || '';
+        document.getElementById('profile_phone').value = adminUser.phone || '';
+        document.getElementById('profile_photo').value = adminUser.photo || '';
+        
+        if (adminUser.photo) {
+          document.getElementById('preview_profile_photo').src = '/assets/uploads/' + adminUser.photo;
+          document.getElementById('preview_profile_photo').style.display = 'block';
+        } else {
+          document.getElementById('preview_profile_photo').style.display = 'none';
+        }
+        document.getElementById('profile_password').value = '';
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function saveAdminProfile(e) {
+      e.preventDefault();
+      const user = localStorage.getItem('croppro_user');
+      if (!user) return;
+      const parsed = JSON.parse(user);
+      const adminId = parsed.cust_id;
+      
+      const payload = {
+        id: adminId,
+        full_name: document.getElementById('profile_name').value.trim(),
+        email: document.getElementById('profile_email').value.trim(),
+        phone: document.getElementById('profile_phone').value.trim(),
+        photo: document.getElementById('profile_photo').value.trim()
+      };
+      
+      const password = document.getElementById('profile_password').value;
+      if (password) {
+        payload.password = password;
+      }
+      
+      try {
+        const res = await fetch('/api/admin/crud?table=tbl_user', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        if (res.ok) {
+          showToast('Profile updated successfully!');
+          parsed.cust_name = payload.full_name;
+          parsed.cust_email = payload.email;
+          parsed.cust_phone = payload.phone;
+          localStorage.setItem('croppro_user', JSON.stringify(parsed));
+          loadAdminProfile();
+        } else {
+          const err = await res.json();
+          showToast('Failed to update profile: ' + (err.error || 'Unknown error'));
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Error updating profile.');
+      }
+    }
+
+    // Helper functions
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.innerText = message;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+.authPage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 0;
+}
+
+.card {
+  width: 100%;
+  max-width: 480px;
+  padding: 40px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.card p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inputGroup label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  gap: 12px;
+  transition: var(--transition-smooth);
+}
+
+.inputWrapper:focus-within {
+  border-color: var(--accent-green);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.inputIcon {
+  color: var(--text-muted);
+}
+
+.inputWrapper input {
+  flex: 1;
+  font-size: 14px;
+  width: 100%;
+}
+
+.inputWrapper input::placeholder {
+  color: var(--text-muted);
+}
+
+.submitBtn {
+  background: var(--accent-green);
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 14px;
+  border-radius: 30px;
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+  transition: var(--transition-smooth);
+}
+
+.submitBtn:hover {
+  background: var(--accent-green-hover);
+  box-shadow: 0 0 15px rgba(36, 161, 72, 0.35);
+}
+
+.submitBtn:disabled {
+  background: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.toggleText {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: 24px;
+}
+
+.toggleText a {
+  color: var(--accent-green);
+  font-weight: 600;
+}
+
+.toggleText a:hover {
+  color: var(--accent-green-hover);
+}
